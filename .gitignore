@@ -1,0 +1,15 @@
+# IDE Settings
+.idea/
+*.iml
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# CS 229 / ML
+*.pth
+*.ckpt
+*.npy
+outputs/
+wandb/
