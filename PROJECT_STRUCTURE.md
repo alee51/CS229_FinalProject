@@ -11,23 +11,12 @@
 
 ## Minimal pipeline (recommended)
 
-1. **Collect expert data** (50 trajectories, 1 per goal; fast):
-   ```bash
-   cd baseline/scripts && python collect_one_per_goal.py
-   ```
-   Writes `baseline/data/expert_data_reach-v3.npz`.
+See **COMMANDS.md** for the full command reference (data collection, training, testing, view 3/3).
 
-2. **Train** (from repo root; uses end-of-trajectory weighting by default):
-   ```bash
-   python train.py --approach baseline
-   ```
-   Saves to `baseline/models/cloned_policy.pth`. To train without end-weighting: `--end-weight 1.0`.
-
-3. **Evaluate** (50 episodes = 1 per goal):
-   ```bash
-   python test.py --approach baseline --model cloned_policy.pth --episodes 50
-   ```
-   Reported success rate = fraction of the 50 goals the policy solved.
+1. **Collect expert data** (50 trajectories, 1 per goal): `cd baseline/scripts && python collect_one_per_goal.py` → `baseline/data/expert_data_reach-v3.npz`.
+2. **Train** (from repo root): `python train.py --approach baseline` → `baseline/models/cloned_policy.pth`.
+3. **Evaluate** (50 episodes = 1 per goal): `python test.py --approach baseline --model cloned_policy.pth --episodes 50 --clip`.
+4. **View 3 success + 3 fail** (same run, labels match): `python test.py --approach baseline --model latest.pth --clip --visualize-success-fail 3`.
 
 ## Project Structure
 
