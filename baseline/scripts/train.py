@@ -82,7 +82,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         end_weight: Weight for (s,a) pairs in the last end_fraction of each trajectory (1.0 = no weighting).
         end_fraction: Fraction of each trajectory (from the end) to up-weight (e.g. 0.3 = last 30%%).
         save_run: If True, append run stats to baseline/training_runs.json and save model to models/runs/run_TS.pth.
-        keep_runs: Max run copies to keep in models/runs/ (oldest deleted). Use 0 to keep all.
+        keep_runs: Max run copies to keep in models/runs/ (oldest deleted). Default 50; use 0 to keep all.
     """
     
     if hidden_sizes is None:
@@ -268,8 +268,8 @@ if __name__ == "__main__":
                         help='Fraction of each trajectory to up-weight from the end (e.g. 0.3 = last 30%%)')
     parser.add_argument('--no-save-run', action='store_true',
                         help='Do not log run to training_runs.json or copy model to runs/')
-    parser.add_argument('--keep-runs', type=int, default=3,
-                        help='Max run copies to keep in models/runs/ (default: 3)')
+    parser.add_argument('--keep-runs', type=int, default=50,
+                        help='Max run copies to keep in models/runs/ (default: 50; 0 = keep all)')
     
     args = parser.parse_args()
     

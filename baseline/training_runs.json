@@ -1,0 +1,21 @@
+[
+  {
+    "timestamp": "20260214_222014",
+    "lr": 0.0003,
+    "epochs": 500,
+    "batch_size": 64,
+    "hidden_sizes": [
+      256,
+      256,
+      128
+    ],
+    "end_weight": 3.0,
+    "end_fraction": 0.3,
+    "clip_actions": false,
+    "save_name": "cloned_policy.pth",
+    "final_loss": 8.839571259718818e-06,
+    "num_samples": 2474,
+    "model_path": "C:\\Users\\nancy\\Desktop\\CS229_FinalProject\\baseline\\models\\cloned_policy.pth",
+    "run_path": "C:\\Users\\nancy\\Desktop\\CS229_FinalProject\\baseline\\models\\runs\\run_20260214_222014.pth"
+  }
+]
