@@ -16,7 +16,7 @@ For every experiment:
 2. **Note** success rate from the script output (and from [baseline/RUNS_SUMMARY.md](RUNS_SUMMARY.md) after it updates).
 3. **Run visualize** so you can see how the robot fails:
   ```bash
-   python test.py --approach baseline --model baseline/models/runs/<run_file>.pth --seed 42 --clip --visualize-success-fail 3
+   python test.py --approach baseline --model baseline/models/runs/<run_file>.pth --seed 42 --visualize-success-fail 3
   ```
    Use the **exact run file** from the training output (e.g. `run_YYYYMMDD_HHMMSS_end3_inner5x10_clip.pth`).
 4. **While watching the 3 failures**, note:
@@ -54,7 +54,7 @@ python train.py --approach baseline --end-inner-weight 5.0 --end-inner-fraction 
 Then:
 
 ```bash
-python test.py --approach baseline --model baseline/models/runs/<anchor_run>.pth --seed 42 --clip --visualize-success-fail 3
+python test.py --approach baseline --model baseline/models/runs/<anchor_run>.pth --seed 42 --visualize-success-fail 3
 ```
 
 Watch the 3 failures and briefly write down the failure mode (e.g. "all 3: close then miss by a bit").
@@ -83,7 +83,7 @@ After **each** train, run visualize with that run's `.pth` and compare failure b
 **3. Visualize (same every time):**
 
 ```bash
-python test.py --approach baseline --model baseline/models/runs/<RUN_FILE>.pth --seed 42 --clip --visualize-success-fail 3
+python test.py --approach baseline --model baseline/models/runs/<RUN_FILE>.pth --seed 42 --visualize-success-fail 3
 ```
 
 ---

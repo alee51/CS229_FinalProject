@@ -108,16 +108,21 @@ python train.py --epochs 100
 
 ## 3. Testing
 
+**Single entrypoint:** Use **`python test.py`** from the project root for all testing (baseline and other approaches). Baseline eval logic lives in `baseline/scripts/test.py`; root delegates to it when `--approach baseline`. You can still run `baseline/scripts/test.py` directly for quick baseline-only runs (e.g. from `baseline/scripts`); root is the recommended entrypoint.
+
+### Single-task (MT1) — from project root
+
 **50-goal eval** (1 episode per goal; deterministic):
 
 ```bash
-python test.py --approach baseline --model cloned_policy.pth --episodes 50 --seed 42 --clip
+python test.py --approach baseline --model cloned_policy.pth --episodes 50 --seed 42
 ```
 
-- `--clip`: clip actions to [-1, 1] at test time (recommended for MetaWorld).
+- **Clip**: Actions are clipped to [-1, 1] by default (same as train.py). Use `--no-clip` to disable.
 - `--seed 42`: reproducible eval (use same seed as training eval for comparable numbers).
 - Success rate = fraction of the 50 goals the policy solved.
-- Training defaults to clip; use `--no-clip` when training to disable.
+- Training and testing both default to clip; use `--no-clip` in either to disable.
+- **Device:** Use `--device auto` (default), `cuda`, `xpu`, or `cpu` for baseline.
 
 **Model path shortcuts:**
 
@@ -129,14 +134,57 @@ python test.py --approach baseline --model cloned_policy.pth --episodes 50 --see
 
 ```bash
 # One episode with visualization (watch the robot)
-python test.py --approach baseline --model latest.pth --episodes 1 --clip --visualize
+python test.py --approach baseline --model latest.pth --episodes 1 --visualize
 
 # N episodes in series in same window
-python test.py --approach baseline --model latest.pth --clip --visualize-series 5
+python test.py --approach baseline --model latest.pth --visualize-series 5
 
 # N envs in parallel (different goals, side by side)
-python test.py --approach baseline --model latest.pth --clip --visualize-parallel 5
+python test.py --approach baseline --model latest.pth --visualize-parallel 5
 ```
+
+### Testing an MT-10 model
+
+From project root, use **`--suite mt10`** to run a **49-dim** multi-task policy over all 10 MT-10 tasks (50 episodes per task, 1 per goal):
+
+```bash
+python test.py --approach baseline --model runs/run_YYYYMMDD_HHMMSS_end1_clip_mt10.pth --suite mt10
+```
+
+**Examples:**
+
+```bash
+# Basic MT-10 eval (clip is default, same as training)
+python test.py --approach baseline --model runs/run_20260216_185600_end1_clip_mt10.pth --suite mt10
+
+# Reproducible eval with seed
+python test.py --approach baseline --model runs/run_20260216_185600_end1_clip_mt10.pth --suite mt10 --seed 42
+
+# With device selection
+python test.py --approach baseline --model runs/run_20260216_185600_end1_clip_mt10.pth --suite mt10 --device cuda
+```
+
+**Output:** Per-task success rate (%) for each of the 10 tasks, then the average success rate across all tasks.
+
+**Optional — direct baseline script:** You can also run the baseline test script directly (e.g. from `baseline/scripts`):
+
+```bash
+cd baseline/scripts
+python test.py --model runs/run_20260216_185600_end1_clip_mt10.pth --suite mt10
+```
+
+**MT-10 / test options (root test.py):**
+
+| Option | Description |
+|--------|-------------|
+| `--model` | **Required.** Model filename or path (under `baseline/models/` when relative). |
+| `--suite mt10` | Use `mt10` to test multi-task (49-dim); default is `mt1` (single task, 39-dim). |
+| `--no-clip` | Do not clip actions (default: clip to [-1, 1], same as train.py). |
+| `--seed N` | Env seed for reproducibility (e.g. `--seed 42`). |
+| `--verbose N` | Print progress every N episodes (0 = off). |
+| `--device` | `auto` (default), `cuda`, `xpu`, or `cpu` (baseline only). |
+
+Note: When `--suite mt10`, evaluation is fixed at 50 goals per task, 10 tasks; `--episodes` and `--task` are ignored.
 
 ---
 
@@ -144,16 +192,27 @@ python test.py --approach baseline --model latest.pth --clip --visualize-paralle
 
 **Single run:** eval 50 goals (no render), then show **3 success** and **3 fail** episodes **with** rendering in the **same** env so labels match.
 
+Use **`--visualize-success-fail N`** and **`--task <name>`** together. The task name selects which task to run (for both MT1 and MT10). Invalid `--task` prints the list of valid tasks and exits with an error.
+
+**MT1 (single-task, 39-dim policy):**
+
 ```bash
-python test.py --approach baseline --model latest.pth --clip --visualize-success-fail 3
+python test.py --approach baseline --model latest.pth --visualize-success-fail 3 --task reach-v3
+python test.py --approach baseline --model latest.pth --visualize-success-fail 3 --task door-open-v3
 ```
 
-- Uses **one** `test_policy` call: first 50 episodes (no window), then 6 episodes with the MetaWorld window (first 3 goals that succeeded, then 3 that failed).
+**MT10 (multi-task, 49-dim policy):** Add `--suite mt10` and choose the task with `--task`:
+
+```bash
+python test.py --approach baseline --model <mt10_model>.pth --suite mt10 --visualize-success-fail 3 --task door-open-v3
+```
+
+- Uses first 50 episodes (no window), then N success + N fail with the MetaWorld window. Clip is on by default.
 - Terminal prints: `>>> Episode j/6: Goal X — SUCCESS` or `FAIL`, then `-> Env result: success/fail`. Because it’s the same env, these match.
 - With `latest-upsampled-end`: same flow but uses the latest upsampled-end run’s checkpoint.
 
 ```bash
-python test.py --approach baseline --model latest-upsampled-end --clip --visualize-success-fail 3
+python test.py --approach baseline --model latest-upsampled-end --visualize-success-fail 3 --task reach-v3
 ```
 
 ---
@@ -163,7 +222,7 @@ python test.py --approach baseline --model latest-upsampled-end --clip --visuali
 **Visualize failures** to see if failures are "almost there" (wrong final approach) vs completely wrong direction:
 
 ```bash
-python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --seed 42 --clip --visualize-success-fail 3
+python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --seed 42 --visualize-success-fail 3
 ```
 
 - Uses the same 50-goal run; then shows 3 success + 3 fail episodes with rendering so you can inspect behavior.
@@ -194,6 +253,8 @@ python check_data_len.py   # if present: prints trajectory count and total sampl
 | Collect expert (single task) | `cd baseline/scripts; python collect_one_per_goal.py` |
 | Collect expert (MT-10) | `cd baseline/scripts; python collect_one_per_goal.py --mt10` |
 | Train             | `python train.py --approach baseline` |
-| Eval 50 goals     | `python test.py --approach baseline --model latest.pth --episodes 50 --seed 42 --clip` |
-| View 3 success + 3 fail | `python test.py --approach baseline --model latest.pth --seed 42 --clip --visualize-success-fail 3` |
-| View 3/3 (upsampled-end model) | `python test.py --approach baseline --model latest-upsampled-end --clip --visualize-success-fail 3` |
+| Eval 50 goals     | `python test.py --approach baseline --model latest.pth --episodes 50 --seed 42` |
+| **Eval MT-10 model** | `python test.py --approach baseline --model runs/run_YYYYMMDD_HHMMSS.pth --suite mt10` |
+| View 3 success + 3 fail | `python test.py --approach baseline --model latest.pth --seed 42 --visualize-success-fail 3 --task reach-v3` |
+| View 3/3 (MT-10, one task) | `python test.py --approach baseline --model <mt10>.pth --suite mt10 --visualize-success-fail 3 --task door-open-v3` |
+| View 3/3 (upsampled-end model) | `python test.py --approach baseline --model latest-upsampled-end --visualize-success-fail 3 --task reach-v3` |

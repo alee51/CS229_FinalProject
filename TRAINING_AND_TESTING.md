@@ -100,10 +100,10 @@ Per goal you get the same outcome every time (deterministic), so each goal's rat
 ## Bug checks and tips
 
 - **Observation**: Must be flat 39-dim for reach-v3. Test script now flattens `obs` so 1D or 2D from env both work.
-- **Actions**: MetaWorld expects actions in **[-1, 1]**. The expert can output larger values (env clips them). Training on raw expert actions is fine; at test time use `--clip` so model outputs are clipped to [-1,1] before `env.step()`.
+- **Actions**: MetaWorld expects actions in **[-1, 1]**. The expert can output larger values (env clips them). Training on raw expert actions is fine; at test time clipping is **default** (same as train.py); use `--no-clip` to disable.
 - **reset() / step()**: Script handles both (obs, info) and older single-value reset; and 5-tuple vs 4-tuple step return.
 - **Epochs**: With only 50 trajectories (~2.5k samples), training longer often helps. Default is now **100 epochs**; try more if loss is still high.
-- **Visualize**: Run with `--visualize --episodes 1` (and optionally `--clip`) to watch one episode. For **3 success + 3 fail** in one run (labels match): `python test.py --approach baseline --model latest.pth --clip --visualize-success-fail 3`. See **COMMANDS.md** for full command reference.
+- **Visualize**: Run with `--visualize --episodes 1` to watch one episode. For **3 success + 3 fail** in one run (labels match): `python test.py --approach baseline --model latest.pth --visualize-success-fail 3`. See **COMMANDS.md** for full command reference.
 
 ---
 

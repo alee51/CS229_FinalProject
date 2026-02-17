@@ -15,8 +15,8 @@ See **COMMANDS.md** for the full command reference (data collection, training, t
 
 1. **Collect expert data** (50 trajectories, 1 per goal): `cd baseline/scripts && python collect_one_per_goal.py` → `baseline/data/expert_data_reach-v3.npz`.
 2. **Train** (from repo root): `python train.py --approach baseline` → `baseline/models/cloned_policy.pth`.
-3. **Evaluate** (50 episodes = 1 per goal): `python test.py --approach baseline --model cloned_policy.pth --episodes 50 --clip`.
-4. **View 3 success + 3 fail** (same run, labels match): `python test.py --approach baseline --model latest.pth --clip --visualize-success-fail 3`.
+3. **Evaluate** (50 episodes = 1 per goal): `python test.py --approach baseline --model cloned_policy.pth --episodes 50`.
+4. **View 3 success + 3 fail** (same run, labels match): `python test.py --approach baseline --model latest.pth --visualize-success-fail 3`.
 
 ## Project Structure
 
@@ -62,23 +62,18 @@ Train with custom hyperparameters:
 python train.py --approach baseline --lr 0.001 --epochs 50 --batch 32 --name my_policy.pth
 ```
 
-Train with action clipping:
+Train without action clipping (default is clip):
 ```bash
-python train.py --approach baseline --clip --epochs 50 --lr 0.001
+python train.py --approach baseline --no-clip --epochs 50 --lr 0.001
 ```
 
 ### Testing
 
-Test on all 50 goals (1 episode per goal; sufficient because env is deterministic):
+Test on all 50 goals (1 episode per goal; sufficient because env is deterministic). Clipping is on by default (same as train.py); use `--no-clip` to disable.
 ```bash
 python test.py --approach baseline --model cloned_policy.pth --episodes 50
 ```
 Success rate = fraction of the 50 goals succeeded.
-
-Test with action clipping:
-```bash
-python test.py --approach baseline --model my_policy.pth --clip
-```
 
 Test on a different task:
 ```bash
@@ -101,7 +96,7 @@ Training script for the baseline approach. Supports custom LR, epochs, batch siz
 Compare which goals different policies failed on. Reads `training_runs.json` and prints goals failed in all runs, goals failed in at least one run, and pairwise overlap. Usage: `python compare_runs.py` (last 10 runs) or `python compare_runs.py --last 5` or `python compare_runs.py --timestamps 20260214_222014 20260214_120000`.
 
 ### baseline/scripts/test.py
-Testing script (rarely used directly—prefer root `test.py`).
+Canonical baseline eval implementation. Root `test.py` delegates to this when `--approach baseline` (single entrypoint). Can still be run directly from `baseline/scripts` for quick MT-10 or device/timing options.
 
 ## Next Steps
 

@@ -76,7 +76,7 @@ def collect_one_per_goal(task_name='reach-v3', output_dir=None, output_path=None
         episode_states = []
         episode_actions = []
 
-        while not done and steps < 500:
+        while not done and steps < 10000:
             action = policy.get_action(obs)
             episode_states.append(obs)
             episode_actions.append(action)
@@ -151,7 +151,7 @@ def collect_mt10_one_per_goal(output_dir=None, output_path=None):
             episode_states = []
             episode_actions = []
 
-            while not done and steps < 500:
+            while not done and steps < 10000:
                 action = policy.get_action(obs)
                 episode_states.append(obs)
                 episode_actions.append(action)

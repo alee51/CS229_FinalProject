@@ -2945,5 +2945,42 @@
     ],
     "failed_goals": [],
     "run_path": "C:\\Users\\nancy\\Desktop\\CS229_FinalProject\\baseline\\models\\runs\\run_20260216_172834_end1_clip.pth"
+  },
+  {
+    "timestamp": "20260216_185600",
+    "lr": 0.0003,
+    "epochs": 1000,
+    "batch_size": 64,
+    "hidden_sizes": [
+      64,
+      64
+    ],
+    "end_weight": 1.0,
+    "end_fraction": 0.3,
+    "end_inner_weight": null,
+    "end_inner_fraction": null,
+    "end_upsample": false,
+    "lr_decay_epoch": null,
+    "lr_decay_gamma": null,
+    "clip_actions": true,
+    "eval_seed": 42,
+    "save_name": "mt10_using_mt1_baseline-1000_epochs",
+    "final_loss": 0.010039422444626016,
+    "num_samples": 35444,
+    "run_path": "C:\\Users\\nancy\\Desktop\\CS229_FinalProject\\baseline\\models\\runs\\run_20260216_185600_end1_clip_mt10.pth",
+    "mt10": true,
+    "success_rate_per_task": [
+      24.0,
+      46.0,
+      6.0,
+      58.0,
+      62.0,
+      100.0,
+      100.0,
+      88.0,
+      0.0,
+      100.0
+    ],
+    "success_rate_avg": 58.4
   }
 ]

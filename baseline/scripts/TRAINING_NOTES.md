@@ -1,12 +1,13 @@
 TRAINING_NOTES.md
 
 ### Current Status
-Trying to improve baseline policy; standard 3 layer, no tail upsampling.
-- 2000 epochs 256 256 128 got 52%.
-- 64 64 with 2000 epochs got 98%!!! 
+Trying to get a baseline on MT-10. Currently, successfully collected 50 expert demonstrations for each of the 10 tasks in MT-10. 
+
+Training the same model on mt-10 gives 100% on drawer open, drawer close, window open. 0% on lever pull. 22% on reach. kind of confusing... 
 
 ###### How to further improve
-- tune this model. 
+- Add weights & biases integration
+- Train the baseline model on MT-10 and test it. 
 
 #### Longer-term future steps
 
@@ -39,7 +40,7 @@ python train.py --name no_end_baseline_64x64.pth --end-weight 1.0 --epochs 2000 
 | hidden_sizes | [64, 64] | --hidden 64 64 |
 | learning_rate | 0.0003 | --lr (default) |
 | batch_size | 64 | --batch (default) |
-| clip_actions | True | (default; not --no-clip) |
+| clip_actions | True | (default; not --no-clip). test.py also clips by default; use --no-clip there to disable. |
 | data_path | baseline/data/expert_data_reach-v3.npz | --data (default) |
 | end_fraction | 0.3 | --end-fraction (default) |
 | end_inner_weight | None | --end-inner-weight (default) |

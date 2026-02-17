@@ -1,16 +1,16 @@
 # Training runs (all recent)
 
-Full history in `training_runs.json`. Per-run models in `models/runs/` with descriptive names (end weight, inner tier, clip/noclip).
+Full history in `training_runs.json`. Per-run models in `models/runs/` with descriptive names (end weight, inner tier, clip/noclip). MT-10 runs show reach and avg success.
 
 **Latest batch** (most recent runs):
 
-| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | success_rate | failed_goals |
-|----------|--------|------------|-----------|------|-----------------|--------------|--------------|
+| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | success_rate | failed_goals / MT10 |
+|----------|--------|------------|-----------|------|-----------------|--------------|---------------------|
+| mt10_using_mt1_baseline-1000_epochs | 1000 | 1.0 | — | yes | 10039.4224 | MT10 reach: 24.0% | avg: 58.4% |
 | no_end_baseline_64x64.pth | 2000 | 1.0 | — | yes | 1.4070 | 100.0% |  |
 | no_end_baseline_64x64x32.pth | 2000 | 1.0 | — | yes | 2.7436 | 84.0% | 4,11,17,25,27,28,32,36 |
 | no_end_baseline_32x32.pth | 2000 | 1.0 | — | yes | 17.0397 | 44.0% | 0,2,5,6,8,9,10,11,12,16,18,19,20,21,24... |
 | no_end_baseline_64x64.pth | 2000 | 1.0 | — | yes | 1.6002 | 98.0% | 18 |
-| no_end_baseline.pth | 2000 | 1.0 | — | yes | 0.7965 | 52.0% | 2,4,5,9,10,11,12,16,18,19,24,25,26,27,28... |
 
 ---
 
@@ -18,6 +18,7 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 
 | run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | success_rate | failed_goals |
 |----------|--------|------------|-----------|------|-----------------|--------------|--------------|
+| no_end_baseline.pth | 2000 | 1.0 | — | yes | 0.7965 | 52.0% | 2,4,5,9,10,11,12,16,18,19,24,25,26,27,28... |
 | no_end_baseline.pth | 500 | 1.0 | — | yes | 2.5232 | 46.0% | 4,5,6,9,10,11,12,16,17,18,19,20,21,24,25... |
 | cloned_policy.pth | 2000 | 3.0 | 5.0@10% | yes | 0.4247 | 38.0% | 0,2,4,5,6,8,9,10,11,12,16,17,18,19,20... |
 | cloned_policy.pth | 1000 | 3.0 | 5.0@10% | yes | 0.8561 | 52.0% | 2,4,5,9,10,11,12,16,17,18,19,20,24,25,27... |

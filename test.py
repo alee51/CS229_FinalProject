@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 """
-Unified test script for CS229 project policies
+Unified test script for CS229 project policies.
+Single entrypoint: use this script for all testing (baseline and other approaches).
+Baseline eval logic lives in baseline/scripts/test.py; root delegates to it when --approach baseline.
 
 Usage:
     python test.py --approach baseline --model cloned_policy.pth --episodes 50
-    python test.py --approach baseline --model cloned_policy.pth --episodes 1 --clip --visualize
-    python test.py --approach baseline --model cloned_policy.pth --clip --visualize-series 5
-    python test.py --approach baseline --model cloned_policy.pth --clip --visualize-success-fail 3  # 3 success + 3 fail
-    python test.py --approach baseline --model latest-upsampled-end --clip --visualize-success-fail 3  # same, using latest end-weighted run
-    python test.py --approach baseline --model cloned_policy.pth --clip --visualize-parallel 5
+    python test.py --approach baseline --model cloned_policy.pth --suite mt10
+    python test.py --approach baseline --model cloned_policy.pth --episodes 1 --visualize
+    python test.py --approach baseline --model cloned_policy.pth --visualize-series 5
+    python test.py --approach baseline --model cloned_policy.pth --visualize-success-fail 3
+    python test.py --approach baseline --model latest-upsampled-end --visualize-success-fail 3
+    python test.py --approach baseline --model cloned_policy.pth --visualize-parallel 5
+    # Clipping is on by default (same as train.py). Use --no-clip to disable.
 """
 
 import metaworld
@@ -19,6 +23,7 @@ import sys
 import os
 import json
 import time
+import importlib.util
 
 # #region agent log
 DEBUG_LOG = os.path.join(os.path.dirname(__file__), ".cursor", "debug.log")
@@ -50,6 +55,18 @@ def resolve_model_name(approach, model_name):
         return model_name
     return os.path.join('runs', f'run_{ts}.pth')
 
+def _load_baseline_test():
+    """Load baseline/scripts/test.py as a module (avoid naming conflict with this script)."""
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(root_dir, 'baseline', 'scripts', 'test.py')
+    if not os.path.exists(path):
+        return None
+    spec = importlib.util.spec_from_file_location("baseline_eval", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def load_model_class(approach):
     """Dynamically load the ClonePolicy from the appropriate approach"""
     if approach == 'baseline':
@@ -68,7 +85,7 @@ def load_model_class(approach):
         sys.exit(1)
 
 def test_policy(approach, model_name, num_episodes=50, task_name='reach-v3', 
-                clip_actions=False, verbose=0, visualize=False, goal_indices=None,
+                clip_actions=True, verbose=0, visualize=False, goal_indices=None,
                 return_episode_results=False, eval_seed=None, visualize_n_after_50=None):
     """Test a policy model from a specific approach.
     
@@ -77,7 +94,7 @@ def test_policy(approach, model_name, num_episodes=50, task_name='reach-v3',
         model_name: Name of the model file (e.g., cloned_policy.pth)
         num_episodes: Number of episodes to test
         task_name: MetaWorld task name
-        clip_actions: Whether to clip actions to [-1, 1] (recommended; env expects [-1,1])
+        clip_actions: Whether to clip actions to [-1, 1] (default True; matches train.py)
         verbose: Print progress every N episodes (0 = off)
         visualize: If True, render env and sleep each step so you can watch.
         goal_indices: If set, run only these goal indices (in order); len must match num_episodes.
@@ -261,7 +278,7 @@ def test_policy(approach, model_name, num_episodes=50, task_name='reach-v3',
     return success_rate
 
 
-def visualize_success_fail(approach, model_name, n_each=3, task_name='reach-v3', clip_actions=False):
+def visualize_success_fail(approach, model_name, n_each=3, task_name='reach-v3', clip_actions=True):
     """One run: 50 episodes (no render), then 3 success + 3 fail with render. Same env so labels match."""
     print("Eval 50 goals (no render), then show 3 success + 3 fail in same run.\n")
     out = test_policy(approach, model_name, num_episodes=50, task_name=task_name,
@@ -275,7 +292,7 @@ def visualize_success_fail(approach, model_name, n_each=3, task_name='reach-v3',
 
 
 def test_policy_parallel_visualize(approach, model_name, n_parallel=5, task_name='reach-v3',
-                                   clip_actions=False):
+                                   clip_actions=True):
     """Run n_parallel envs at once, each with a different goal, all rendering so you can compare.
     Steps all envs in lockstep; each window shows one goal. Good for spotting shared failure modes.
     """
@@ -385,7 +402,8 @@ if __name__ == "__main__":
 Examples:
   python test.py --approach baseline --model cloned_policy_stable2.pth
   python test.py --approach baseline --model cloned_policy.pth --episodes 500 --verbose 50
-  python test.py --approach baseline --model baseline_lr001_e50.pth --clip
+  python test.py --approach baseline --model baseline_lr001_e50.pth
+  python test.py --approach baseline --model my.pth --no-clip   # disable action clipping
         """
     )
     
@@ -398,8 +416,8 @@ Examples:
                         help='Number of test episodes (default: 50, one per goal)')
     parser.add_argument('--task', type=str, default='reach-v3', 
                         help='MetaWorld task name (default: reach-v3)')
-    parser.add_argument('--clip', action='store_true', 
-                        help='Clip actions to [-1, 1]')
+    parser.add_argument('--no-clip', action='store_true', 
+                        help='Do not clip actions (default: clip to [-1, 1], same as train.py)')
     parser.add_argument('--verbose', type=int, default=0, 
                         help='Print progress every N episodes (0=off)')
     parser.add_argument('--visualize', action='store_true',
@@ -412,21 +430,152 @@ Examples:
                         help='Eval 50 goals, then show N successes + N failures in same window (e.g. 3)')
     parser.add_argument('--seed', type=int, default=None, metavar='N',
                         help='Seed for env.reset(seed=seed+goal_idx) for reproducible eval; omit for stochastic')
+    parser.add_argument('--suite', type=str, default='mt1', choices=['mt1', 'mt10'],
+                        help='mt1: single task (default). mt10: all 10 MT-10 tasks, 50 goals each (baseline only, 49-dim policy)')
+    parser.add_argument('--device', type=str, default='auto', choices=['auto', 'cuda', 'xpu', 'cpu'],
+                        help='Device for baseline (default: auto); ignored for other approaches')
     
     args = parser.parse_args()
     args.model = resolve_model_name(args.approach, args.model)
 
+    # Option A: single entrypoint — delegate all baseline testing to baseline/scripts/test.py
+    if args.approach == 'baseline':
+        baseline_eval = _load_baseline_test()
+        if baseline_eval is None:
+            print("Could not load baseline/scripts/test.py")
+            sys.exit(1)
+        full_model_path = os.path.join(args.approach, 'models', args.model)
+        if not os.path.exists(full_model_path):
+            print(f"Model not found: {full_model_path}")
+            sys.exit(1)
+        device = baseline_eval.get_device(args.device)
+
+        if args.task not in baseline_eval.MT10_TASKS:
+            print(f"Task '{args.task}' not found. Valid tasks: {', '.join(baseline_eval.MT10_TASKS)}.")
+            sys.exit(1)
+
+        if args.visualize_success_fail > 0:
+            print(f"\n{'='*70}")
+            print(f"Visualize N success + N fail (N={args.visualize_success_fail})")
+            print(f"{'='*70}")
+            print(f"Model: {args.model}  Task: {args.task}  Clip: {'Yes' if not args.no_clip else 'No'}\n")
+            if args.suite == 'mt10':
+                result = baseline_eval.visualize_success_fail_mt10(
+                    full_model_path,
+                    task_name=args.task,
+                    n_each=args.visualize_success_fail,
+                    clip_actions=not args.no_clip,
+                    seed=args.seed if args.seed is not None else 42,
+                    device=device,
+                )
+            else:
+                result = baseline_eval.visualize_success_fail(
+                    full_model_path,
+                    n_each=args.visualize_success_fail,
+                    task_name=args.task,
+                    clip_actions=not args.no_clip,
+                    seed=args.seed if args.seed is not None else 42,
+                    device=device,
+                )
+            if result is not None:
+                print(f"\nOverall success rate: {result:.2f}%")
+            sys.exit(0 if result is not None else 1)
+
+        if args.visualize_parallel > 0:
+            print(f"\n{'='*70}")
+            print(f"Parallel visualize: {args.visualize_parallel} envs (different goals)")
+            print(f"{'='*70}")
+            print(f"Model: {args.model}  Clip: {'Yes' if not args.no_clip else 'No'}\n")
+            result = baseline_eval.test_policy_parallel_visualize(
+                full_model_path,
+                n_parallel=args.visualize_parallel,
+                task_name=args.task,
+                clip_actions=not args.no_clip,
+                device=device,
+            )
+            if result is not None:
+                print(f"\nSUCCESS RATE (this run): {result:.2f}%")
+            sys.exit(0 if result is not None else 1)
+
+        if args.suite == 'mt10':
+            print(f"\n{'='*70}")
+            print(f"Testing Policy (MT-10)")
+            print(f"{'='*70}")
+            print(f"Model:           {args.model}")
+            print(f"Suite:           mt10 (50 goals × 10 tasks)")
+            print(f"Clip Actions:    {'Yes' if not args.no_clip else 'No'}")
+            print(f"Seed:            {args.seed}")
+            print(f"Device:          {device}")
+            print(f"{'='*70}\n")
+            result = baseline_eval.test_policy_mt10(
+                full_model_path,
+                clip_actions=not args.no_clip,
+                seed=args.seed,
+                verbose=args.verbose,
+                device=device,
+            )
+            if result is not None:
+                success_per_task, avg = result
+                print("\nPer-task success rate (%):")
+                for name, rate in zip(baseline_eval.MT10_TASKS, success_per_task):
+                    print(f"  {name}: {rate:.1f}%")
+                print(f"\n{'='*70}")
+                print(f"Average success rate: {avg:.2f}%")
+                print(f"{'='*70}\n")
+            else:
+                print("\nTest failed\n")
+            sys.exit(0 if result is not None else 1)
+
+        # Plain MT1 test (with optional visualize / visualize-series)
+        if args.visualize_series > 0:
+            args.visualize = True
+            args.episodes = args.visualize_series
+        if args.visualize and args.episodes > 5 and args.visualize_series == 0:
+            print("(Visualize mode: limiting to 5 episodes. Use --visualize-series N for more in same window.)")
+            args.episodes = min(args.episodes, 5)
+        print(f"\n{'='*70}")
+        print(f"Testing Policy")
+        print(f"{'='*70}")
+        print(f"Approach:        {args.approach}")
+        print(f"Model:           {args.model}")
+        print(f"Task:            {args.task}")
+        print(f"Episodes:        {args.episodes}")
+        print(f"Clip Actions:    {'Yes' if not args.no_clip else 'No'}")
+        seed_str = str(args.seed) if args.seed is not None else "None (stochastic — results will vary run-to-run)"
+        print(f"Seed:            {seed_str}")
+        print(f"Visualize:       {'Yes' if args.visualize else 'No'}")
+        print(f"Device:          {device}")
+        print(f"{'='*70}\n")
+        result = baseline_eval.test_policy(
+            full_model_path,
+            num_episodes=args.episodes,
+            task_name=args.task,
+            clip_actions=not args.no_clip,
+            verbose=args.verbose,
+            seed=args.seed,
+            device=device,
+            visualize=args.visualize,
+        )
+        if result is not None:
+            print(f"\n{'='*70}")
+            print(f"SUCCESS RATE: {result:.2f}%")
+            print(f"{'='*70}\n")
+        else:
+            print(f"\nTest failed\n")
+        sys.exit(0 if result is not None else 1)
+
+    # Non-baseline approaches: use in-script test_policy, load_model_class, etc.
     if args.visualize_success_fail > 0:
         print(f"\n{'='*70}")
         print(f"Visualize N success + N fail (N={args.visualize_success_fail})")
         print(f"{'='*70}")
-        print(f"Model: {args.model}  Clip: {'Yes' if args.clip else 'No'}\n")
+        print(f"Model: {args.model}  Clip: {'Yes' if not args.no_clip else 'No'}\n")
         result = visualize_success_fail(
             approach=args.approach,
             model_name=args.model,
             n_each=args.visualize_success_fail,
             task_name=args.task,
-            clip_actions=args.clip
+            clip_actions=not args.no_clip
         )
         if result is not None:
             print(f"\nOverall success rate: {result:.2f}%")
@@ -440,13 +589,13 @@ Examples:
         print(f"\n{'='*70}")
         print(f"Parallel visualize: {args.visualize_parallel} envs (different goals)")
         print(f"{'='*70}")
-        print(f"Model: {args.model}  Clip: {'Yes' if args.clip else 'No'}\n")
+        print(f"Model: {args.model}  Clip: {'Yes' if not args.no_clip else 'No'}\n")
         result = test_policy_parallel_visualize(
             approach=args.approach,
             model_name=args.model,
             n_parallel=args.visualize_parallel,
             task_name=args.task,
-            clip_actions=args.clip
+            clip_actions=not args.no_clip
         )
         if result is not None:
             print(f"\nSUCCESS RATE (this run): {result:.2f}%")
@@ -463,7 +612,7 @@ Examples:
     print(f"Model:           {args.model}")
     print(f"Task:            {args.task}")
     print(f"Episodes:        {args.episodes}")
-    print(f"Clip Actions:    {'Yes' if args.clip else 'No'}")
+    print(f"Clip Actions:    {'Yes' if not args.no_clip else 'No'}")
     seed_str = str(args.seed) if args.seed is not None else "None (stochastic — results will vary run-to-run)"
     print(f"Seed:            {seed_str}")
     print(f"Visualize:       {'Yes' if args.visualize else 'No'}")
@@ -474,7 +623,7 @@ Examples:
         model_name=args.model,
         num_episodes=args.episodes,
         task_name=args.task,
-        clip_actions=args.clip,
+        clip_actions=not args.no_clip,
         verbose=args.verbose,
         visualize=args.visualize,
         eval_seed=args.seed

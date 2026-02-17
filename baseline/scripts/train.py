@@ -7,13 +7,50 @@ import argparse
 import os
 import json
 import shutil
+import time
 from datetime import datetime
 
+# MT-10 task list (same as collect_one_per_goal.py)
+MT10_TASKS = [
+    'reach-v3', 'push-v3', 'pick-place-v3', 'door-open-v3', 'door-close-v3',
+    'drawer-open-v3', 'drawer-close-v3', 'button-press-v3', 'lever-pull-v3', 'window-open-v3',
+]
 
-def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42):
+
+def get_device(device_prefer="auto"):
+    """Resolve device: 'auto' (cuda -> xpu -> cpu), 'cuda', 'xpu', or 'cpu'.
+    Works for NVIDIA (cuda), Intel Arc (xpu), and CPU-only machines."""
+    if device_prefer == "cpu":
+        return torch.device("cpu")
+    if device_prefer == "cuda" and torch.cuda.is_available():
+        return torch.device("cuda")
+    if device_prefer == "xpu":
+        xpu = getattr(torch, "xpu", None)
+        if xpu is not None and xpu.is_available():
+            return torch.device("xpu")
+        return torch.device("cpu")
+    if device_prefer == "auto":
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        xpu = getattr(torch, "xpu", None)
+        if xpu is not None and xpu.is_available():
+            return torch.device("xpu")
+    return torch.device("cpu")
+
+
+def one_hot_task(task_id, num_tasks=10):
+    """Return one-hot vector of shape (num_tasks,) for the given task index."""
+    out = np.zeros(num_tasks, dtype=np.float32)
+    out[task_id] = 1.0
+    return out
+
+
+def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42, device=None):
     """Run 50 episodes (1 per goal), return success_rate, goal_success (list of 50 bools), failed_goals (list of indices).
     If eval_seed is not None, env.reset(seed=eval_seed+goal_idx) for reproducible eval (match test.py --seed N)."""
     import metaworld
+    if device is None:
+        device = torch.device("cpu")
     # Match test.py: fix RNG so eval is reproducible and matches test.py --seed N
     if eval_seed is not None:
         np.random.seed(eval_seed)
@@ -22,6 +59,12 @@ def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42)
             torch.cuda.manual_seed_all(eval_seed)
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = False
+        xpu = getattr(torch, "xpu", None)
+        if xpu is not None and xpu.is_available():
+            try:
+                xpu.manual_seed_all(eval_seed)
+            except Exception:
+                pass
     policy.eval()
     mt1 = metaworld.MT1(task_name)
     env = mt1.train_classes[task_name]()
@@ -43,9 +86,9 @@ def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42)
         done = False
         steps = 0
         while not done and steps < 500:
-            obs_t = torch.FloatTensor(obs)
+            obs_t = torch.FloatTensor(obs).to(device)
             with torch.no_grad():
-                action = policy(obs_t).numpy()
+                action = policy(obs_t).cpu().numpy()
             action = np.asarray(action).flatten().astype(np.float64)
             if clip_actions:
                 action = np.clip(action, -1.0, 1.0)
@@ -63,11 +106,79 @@ def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42)
     success_rate = sum(goal_success) / len(goal_success) * 100
     return success_rate, goal_success, failed_goals
 
+
+def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
+    """Run 50 episodes (1 per goal) for each of the 10 MT-10 tasks; input = concat(obs, one_hot(task_id)).
+    Returns success_rate_per_task (list of 10 floats), success_rate_avg (float)."""
+    import metaworld
+    if device is None:
+        device = torch.device("cpu")
+    if eval_seed is not None:
+        np.random.seed(eval_seed)
+        torch.manual_seed(eval_seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(eval_seed)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+        xpu = getattr(torch, "xpu", None)
+        if xpu is not None and xpu.is_available():
+            try:
+                xpu.manual_seed_all(eval_seed)
+            except Exception:
+                pass
+    policy.eval()
+    success_rate_per_task = []
+    for task_id, task_name in enumerate(MT10_TASKS):
+        mt1 = metaworld.MT1(task_name)
+        env = mt1.train_classes[task_name]()
+        goal_success = []
+        n_goals = min(50, len(mt1.train_tasks))
+        for goal_idx in range(n_goals):
+            task = mt1.train_tasks[goal_idx]
+            env.set_task(task)
+            if eval_seed is not None:
+                try:
+                    out = env.reset(seed=eval_seed + task_id * 1000 + goal_idx)
+                except TypeError:
+                    out = env.reset()
+            else:
+                out = env.reset()
+            obs = out[0] if isinstance(out, tuple) else out
+            if isinstance(obs, tuple):
+                obs = obs[0] if len(obs) > 0 else obs
+            obs = np.asarray(obs).flatten()
+            oh = one_hot_task(task_id)
+            done = False
+            steps = 0
+            while not done and steps < 500:
+                x = np.concatenate([obs, oh]).astype(np.float32)
+                obs_t = torch.FloatTensor(x).to(device)
+                with torch.no_grad():
+                    action = policy(obs_t).cpu().numpy()
+                action = np.asarray(action).flatten().astype(np.float64)
+                if clip_actions:
+                    action = np.clip(action, -1.0, 1.0)
+                step_out = env.step(action)
+                if len(step_out) == 5:
+                    obs, _, term, trunc, info = step_out
+                else:
+                    obs, _, done, info = step_out
+                    term, trunc = done, False
+                done = term or trunc
+                obs = np.asarray(obs).flatten() if not done else obs
+                steps += 1
+            goal_success.append(bool(info.get("success", False)))
+        rate = sum(goal_success) / len(goal_success) * 100
+        success_rate_per_task.append(rate)
+    success_rate_avg = sum(success_rate_per_task) / len(success_rate_per_task)
+    return success_rate_per_task, success_rate_avg
+
+
 class ClonePolicy(nn.Module):
     def __init__(self, input_dim, output_dim, hidden_sizes=None):
         super(ClonePolicy, self).__init__()
         if hidden_sizes is None:
-            hidden_sizes = [256, 256, 128]
+            hidden_sizes = [64, 64]
         
         layers = []
         prev_dim = input_dim
@@ -85,7 +196,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
                 save_name='cloned_policy.pth', clip_actions=True, data_path=None,
                 end_weight=3.0, end_fraction=0.3, end_inner_weight=None, end_inner_fraction=0.0,
                 save_run=True, keep_runs=3, eval_seed=42, lr_decay_epoch=None, lr_decay_gamma=0.5,
-                end_upsample=False):
+                end_upsample=False, mt10=False, device="auto"):
     """Train a behavioral cloning policy.
     
     Args:
@@ -106,25 +217,49 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         lr_decay_epoch: If set (e.g. 250), multiply learning rate by lr_decay_gamma every this many epochs.
         lr_decay_gamma: Factor for LR decay (default 0.5). Used only if lr_decay_epoch is set.
         end_upsample: If True, duplicate last segments in the dataset and train with uniform MSE instead of weighted MSE.
+        mt10: If True, load MT-10 data (expect task_ids in npz), append one-hot to states (49-dim), and use eval_mt10 after training.
+        device: 'auto' (cuda -> xpu -> cpu), 'cuda', 'xpu', or 'cpu'.
     """
     
+    device = get_device(device)
     if hidden_sizes is None:
         hidden_sizes = [256, 256, 128]
     
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     if data_path is None:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        data_path = os.path.join(script_dir, '..', 'data', 'expert_data_reach-v3.npz')
+        data_path = os.path.join(script_dir, '..', 'data',
+                                 'expert_data_mt10.npz' if mt10 else 'expert_data_reach-v3.npz')
     
-    model_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'models')
+    model_dir = os.path.join(script_dir, '..', 'models')
     os.makedirs(model_dir, exist_ok=True)
     save_path = os.path.join(model_dir, save_name)
     
     print(f"Loading data from: {data_path}")
     print(f"Will save model to: {save_path}")
+    print(f"Device: {device}")
+    if mt10:
+        print("MT-10 mode: 49-dim input (obs + one-hot task)")
     
     data = np.load(data_path, allow_pickle=True)
     states_list = list(data['states'])
     actions_list = list(data['actions'])
+    
+    if mt10:
+        if 'task_ids' not in data:
+            raise ValueError("MT-10 mode requires 'task_ids' in the npz file.")
+        task_ids = np.asarray(data['task_ids'])
+        if len(task_ids) != len(states_list):
+            raise ValueError("task_ids length must match number of trajectories.")
+        # Append one-hot(task_id) to each state in each trajectory -> (T, 49)
+        new_states_list = []
+        for i, (traj_s, tid) in enumerate(zip(states_list, task_ids)):
+            oh = one_hot_task(int(tid))
+            traj_s = np.asarray(traj_s)
+            if traj_s.ndim == 1:
+                traj_s = traj_s.reshape(1, -1)
+            oh_broadcast = np.broadcast_to(oh, (len(traj_s), len(oh)))
+            new_states_list.append(np.hstack([traj_s.astype(np.float32), oh_broadcast]))
+        states_list = new_states_list
     
     # Build per-sample weights or upsampled data: two-tier optional.
     use_inner = (end_inner_weight is not None and end_inner_fraction > 0 and end_inner_weight != 1.0
@@ -209,9 +344,11 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
     policy = ClonePolicy(X_tensor.shape[1], Y_tensor.shape[1], hidden_sizes=hidden_sizes)
+    policy = policy.to(device)
     optimizer = optim.Adam(policy.parameters(), lr=learning_rate)
     use_weights = not end_upsample and (end_weight != 1.0 or (use_inner and end_inner_weight != 1.0))
 
+    train_start = time.perf_counter()
     print(f"\nTraining: LR={learning_rate}, Epochs={num_epochs}, Batch={batch_size}")
     if lr_decay_epoch is not None:
         print(f"LR decay: every {lr_decay_epoch} epochs × {lr_decay_gamma}")
@@ -225,7 +362,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             print(f"  LR decay at epoch {epoch+1}: new LR = {optimizer.param_groups[0]['lr']:.6f}")
         total_loss = 0
         for batch in dataloader:
-            batch_x, batch_y, batch_w = batch
+            batch_x, batch_y, batch_w = batch[0].to(device), batch[1].to(device), batch[2].to(device)
             predictions = policy(batch_x)
             if use_weights:
                 mse_per_sample = ((predictions - batch_y) ** 2).mean(dim=1)
@@ -242,6 +379,9 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         if (epoch + 1) % 50 == 0 or (epoch + 1) == num_epochs:
             print(f"Epoch {epoch+1}/{num_epochs} | Loss: {final_loss:.6f}")
 
+    train_elapsed = time.perf_counter() - train_start
+    print(f"\nTraining completed in {train_elapsed:.1f}s ({train_elapsed/60:.1f} min)")
+
     if save_run:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         runs_dir = os.path.join(model_dir, "runs")
@@ -253,6 +393,8 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         if end_upsample:
             name_parts.append("upsample")
         name_parts.append("clip" if clip_actions else "noclip")
+        if mt10:
+            name_parts.append("mt10")
         run_fname = f"run_{ts}_{'_'.join(name_parts)}.pth"
         run_path = os.path.join(runs_dir, run_fname)
         torch.save(policy.state_dict(), run_path)
@@ -263,9 +405,15 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         print(f"\nModel saved to {save_path}")
 
     if save_run:
-        print("Running 50-goal eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
-        success_rate, goal_success, failed_goals = eval_50_goals(policy, clip_actions=clip_actions, eval_seed=eval_seed)
-        print(f"  Eval: {success_rate:.1f}% ({len(goal_success) - len(failed_goals)}/50)")
+        if mt10:
+            print("Running MT-10 eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
+            success_rate_per_task, success_rate_avg = eval_mt10(policy, clip_actions=clip_actions, eval_seed=eval_seed, device=device)
+            per_task_str = ", ".join(f"{name}: {r:.0f}%" for name, r in zip(MT10_TASKS, success_rate_per_task))
+            print(f"  Eval: avg={success_rate_avg:.1f}% | per-task: " + per_task_str)
+        else:
+            print("Running 50-goal eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
+            success_rate, goal_success, failed_goals = eval_50_goals(policy, clip_actions=clip_actions, eval_seed=eval_seed, device=device)
+            print(f"  Eval: {success_rate:.1f}% ({len(goal_success) - len(failed_goals)}/50)")
 
         run_record = {
             "timestamp": ts,
@@ -285,11 +433,17 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             "save_name": save_name,
             "final_loss": float(final_loss) if final_loss is not None else None,
             "num_samples": num_samples,
-            "success_rate": round(success_rate, 2),
-            "goal_success": goal_success,
-            "failed_goals": failed_goals,
             "run_path": os.path.abspath(run_path),
+            "mt10": mt10,
+            "train_duration_seconds": round(train_elapsed, 1),
         }
+        if mt10:
+            run_record["success_rate_per_task"] = [round(r, 2) for r in success_rate_per_task]
+            run_record["success_rate_avg"] = round(success_rate_avg, 2)
+        else:
+            run_record["success_rate"] = round(success_rate, 2)
+            run_record["goal_success"] = goal_success
+            run_record["failed_goals"] = failed_goals
         log_path = os.path.join(model_dir, "..", "training_runs.json")
         log_path = os.path.abspath(log_path)
         runs_list = []
@@ -325,21 +479,28 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             clip_str = "yes" if ca is True else ("no" if ca is False else "—")
             fl = r.get("final_loss")
             fl_display = f"{fl * 1e6:.4f}" if fl is not None else "—"
+            td = r.get("train_duration_seconds")
+            time_str = f"{td}s" if td is not None else "—"
+            if r.get("mt10"):
+                sr_per = r.get("success_rate_per_task") or []
+                reach = f"{sr_per[0]}%" if len(sr_per) > 0 else "—"
+                avg = f"{r.get('success_rate_avg', '—')}%" if r.get("success_rate_avg") is not None else "—"
+                return f"| {run_file} | {ep} | {ew} | {ei_str} | {clip_str} | {fl_display} | {time_str} | MT10 reach: {reach} | avg: {avg} |"
             sr = r.get("success_rate")
             sr = f"{sr}%" if sr is not None else "—"
             fg = r.get("failed_goals", [])
             fg_str = ",".join(str(x) for x in fg[:15]) + ("..." if len(fg) > 15 else "")
-            return f"| {run_file} | {ep} | {ew} | {ei_str} | {clip_str} | {fl_display} | {sr} | {fg_str} |"
+            return f"| {run_file} | {ep} | {ew} | {ei_str} | {clip_str} | {fl_display} | {time_str} | {sr} | {fg_str} |"
 
         lines = [
             "# Training runs (all recent)",
             "",
-            "Full history in `training_runs.json`. Per-run models in `models/runs/` with descriptive names (end weight, inner tier, clip/noclip).",
+            "Full history in `training_runs.json`. Per-run models in `models/runs/` with descriptive names (end weight, inner tier, clip/noclip). MT-10 runs show reach and avg success.",
             "",
             "**Latest batch** (most recent runs):",
             "",
-            "| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | success_rate | failed_goals |",
-            "|----------|--------|------------|-----------|------|-----------------|--------------|--------------|",
+            "| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |",
+            "|----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|",
         ]
         for r in latest_batch:
             lines.append(row(r))
@@ -349,8 +510,8 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             "",
             "**Older runs:**",
             "",
-            "| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | success_rate | failed_goals |",
-            "|----------|--------|------------|-----------|------|-----------------|--------------|--------------|",
+            "| run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |",
+            "|----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|",
         ])
         for r in older:
             lines.append(row(r))
@@ -399,6 +560,11 @@ if __name__ == "__main__":
                         help='LR decay factor (default 0.5); used only if --lr-decay-epoch is set')
     parser.add_argument('--end-upsample', action='store_true',
                         help='Use end upsampling (duplicate last segments) instead of weighted MSE')
+    parser.add_argument('--mt10', action='store_true',
+                        help='MT-10 mode: load data with task_ids, 49-dim input, eval on all 10 tasks')
+    parser.add_argument('--device', type=str, default='auto',
+                        choices=['auto', 'cuda', 'xpu', 'cpu'],
+                        help='Device: auto (prefer GPU), cuda (NVIDIA), xpu (Intel Arc), or cpu (default: auto)')
     
     args = parser.parse_args()
     
@@ -419,5 +585,7 @@ if __name__ == "__main__":
         eval_seed=args.eval_seed,
         lr_decay_epoch=args.lr_decay_epoch,
         lr_decay_gamma=args.lr_decay_gamma,
-        end_upsample=args.end_upsample
+        end_upsample=args.end_upsample,
+        mt10=args.mt10,
+        device=args.device,
     )

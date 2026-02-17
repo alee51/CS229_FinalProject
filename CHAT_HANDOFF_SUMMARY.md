@@ -11,8 +11,8 @@ Train a single policy that succeeds on as many of the **50 reach-v3 goals** as p
 - **Tail-end upsampling:** Two-tier weighting is implemented. Outer: last 30% of each traj at 3×. Inner (optional): last 5% or 10% at 5× or 7× via `--end-inner-weight` and `--end-inner-fraction`.
 - **Best so far:** Level 2 (5× last 10%) gave the highest success rate. Level 1 (5× last 5%) and Level 3 (7× last 5%) were worse.
 - **Default training:** 500 epochs. Eval at end of training uses seed 42 and matches `test.py --seed 42` (RNG is seeded in both).
-- **Default training:** Clip actions (default). Use `--no-clip` to disable. Always test with `--seed 42 --clip` for comparable numbers.
-- **Reproducible test:** `python test.py --approach baseline --model <path> --episodes 50 --seed 42 --clip`
+- **Default training:** Clip actions (default). Use `--no-clip` to disable. Test with `--seed 42` for comparable numbers (clip is default at test time too).
+- **Reproducible test:** `python test.py --approach baseline --model <path> --episodes 50 --seed 42`
 
 ## Commands (see COMMANDS.md)
 
@@ -21,12 +21,12 @@ Train a single policy that succeeds on as many of the **50 reach-v3 goals** as p
 - **Test (reproducible):**  
   `python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --episodes 50 --seed 42`
 - **Visualize 3 success + 3 fail:**  
-  `python test.py --approach baseline --model <path> --seed 42 --clip --visualize-success-fail 3`
+  `python test.py --approach baseline --model <path> --seed 42 --visualize-success-fail 3`
 
 ## Next: tune one variable at a time
 
 - **Approach:** Use a single baseline (500 epochs, end 3.0, inner 5.0@10%, clip) and change **one** variable per run. See **`baseline/TUNING_APPROACH.md`** for the anchor config and suggested one-at-a-time experiments.
-- Compare with `test.py --seed 42 --clip` and use `baseline/RUNS_SUMMARY.md` and `baseline/training_runs.json` to track runs.
+- Compare with `test.py --seed 42` and use `baseline/RUNS_SUMMARY.md` and `baseline/training_runs.json` to track runs.
 
 ## Key files
 

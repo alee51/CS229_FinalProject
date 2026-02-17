@@ -25,11 +25,11 @@ Each run is logged to `baseline/training_runs.json` and a run copy is saved unde
 2. **Compare success rates** in `baseline/RUNS_SUMMARY.md` (and `baseline/training_runs.json` for full run details).
 3. **Test the best run(s)** explicitly:
    ```bash
-   python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --episodes 50 --clip
+   python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --episodes 50
    ```
 4. **Optional: visualize failures** for the best config to see if failures are still “slightly off center” and decide next steps (e.g. 8× last 5%, or 5× last 7%):
    ```bash
-   python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --clip --visualize-success-fail 3
+   python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHMMSS.pth --visualize-success-fail 3
    ```
 
 ---
