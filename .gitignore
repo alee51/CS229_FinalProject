@@ -1,2 +1,3 @@
 # Environment file with real API keys — do not commit
 .env
+wandb

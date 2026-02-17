@@ -1,4 +1,0 @@
-[34m[1mwandb[0m: [33mWARNING[0m Config item 'suite' was locked by 'sweep' (ignored update).
-[34m[1mwandb[0m: [33mWARNING[0m Config item 'epochs' was locked by 'sweep' (ignored update).
-[34m[1mwandb[0m: [33mWARNING[0m Config item 'end_weight' was locked by 'sweep' (ignored update).
-[34m[1mwandb[0m: [33mWARNING[0m Config item 'end_inner_fraction' was locked by 'sweep' (ignored update).
