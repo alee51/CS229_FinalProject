@@ -13,7 +13,7 @@ save_name: cloned_policy.pth
 # Loss / behavior
 clip_actions: true
 end_weight: 3.0
-end_fraction: 0.3
+end_fraction: 0
 end_inner_weight: null  # set to float (e.g. 5.0) for inner tier
 end_inner_fraction: 0.05
 end_upsample: false

@@ -1,0 +1,6 @@
+Loading data from: C:\Users\nancy\Desktop\CS229_FinalProject\baseline\scripts\..\data\expert_data_mt10.npz
+Will save model to: C:\Users\nancy\Desktop\CS229_FinalProject\baseline\scripts\..\models\cloned_policy.pth
+Device: cpu
+Multi-task mode (mt10): 49-dim input (obs + one-hot task)
+[34m[1mwandb[0m: [33mWARNING[0m Ignoring project 'CS229_FinalProject' when running a sweep.
+[34m[1mwandb[0m: Finishing previous runs because reinit is set to True.

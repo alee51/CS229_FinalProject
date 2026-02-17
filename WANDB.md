@@ -135,9 +135,84 @@ Run three one-at-a-time / full-grid sweeps for MT-10 (reference baseline: 500 ep
 
 Total: 2 + 2 + 16 = 20 runs. **Parallel agents:** W&B does not auto-start multiple agents. To run in parallel, start multiple `wandb agent` processes manually (e.g. one per sweep in separate terminals).
 
-### Running sweeps from the W&B web UI
+### Create a sweep from the W&B web UI
 
-Create a new sweep in the project; set the **program** to `run_sweep.py` and ensure the run command executes from the **project root** (so `run_sweep.py` and `baseline/` resolve correctly). Sweep parameter names the entrypoint expects: `hidden_dim`, `epochs`, `end_inner_fraction`, `suite`, `lr`, `batch_size`, `end_weight`, `end_fraction`, `end_inner_weight`, `lr_decay_epoch`, `lr_decay_gamma`. You can paste or adapt `baseline/sweep.yaml` or the MT-10 sweep YAMLs in the UI.
+You can initialize sweeps in the W&B web UI instead of writing local YAML files. The agent still runs locally; it pulls the sweep config from W&B.
+
+**Steps to create a sweep in the UI**
+
+1. Open your project at [wandb.ai](https://wandb.ai) (e.g. **CS229_FinalProject**).
+2. Go to **Sweeps** in the project, then **Create sweep** / **New sweep**.
+3. In the sweep creator you will see either:
+   - A **YAML config** text area: paste a full sweep config (see templates below), or
+   - A **method / metric / parameters** form: set method (e.g. grid), metric name `eval/success_rate_avg`, goal **maximize**, then add parameters by name and type.
+4. Set the **program** to `run_sweep.py` (or the command that runs it, e.g. `python run_sweep.py`). When you run the agent from your machine with `wandb agent ...` from the **project root**, the working directory is already correct.
+5. Save/create the sweep. Copy the sweep ID, then from project root run: `wandb agent <entity>/CS229_FinalProject/<sweep_id>`. No YAML file is needed on disk for the sweep definition.
+
+**Parameter reference** (for the UI form or when editing pasted YAML)
+
+Parameters that `run_sweep.py` reads from the sweep config. Any parameter not set in the sweep falls back to `baseline/train_config.yaml`.
+
+| Parameter | Type | Example (YAML) |
+|-----------|------|----------------|
+| `suite` | string | `value: mt10` |
+| `end_weight` | float | `value: 1.0` |
+| `end_fraction` | float | `value: 0.3` |
+| `epochs` | integer | `values: [500, 1000]` |
+| `hidden_dim` | integer | `values: [128, 256]` (builds [dim, dim] in code) |
+| `end_inner_fraction` | float | `values: [0, 0.01]` |
+| `end_inner_weight` | float or null | omit or `value: null` |
+| `lr` | float | optional |
+| `batch_size` | integer | optional |
+| `lr_decay_epoch`, `lr_decay_gamma` | integer, float | optional |
+
+**Copy-paste YAML templates**
+
+Paste one of these into the UI’s YAML config editor, then edit the `parameters` section as needed.
+
+**Template 1 — MT-10 architecture sweep (grid, 2 runs):**
+
+```yaml
+program: run_sweep.py
+method: grid
+metric:
+  name: eval/success_rate_avg
+  goal: maximize
+parameters:
+  suite:
+    value: mt10
+  end_weight:
+    value: 1.0
+  epochs:
+    value: 500
+  hidden_dim:
+    values: [128, 256]
+  end_inner_fraction:
+    value: 0.01
+```
+
+**Template 2 — Small custom grid (edit values in UI):**
+
+```yaml
+program: run_sweep.py
+method: grid
+metric:
+  name: eval/success_rate_avg
+  goal: maximize
+parameters:
+  suite:
+    value: mt10
+  end_weight:
+    value: 1.0
+  epochs:
+    values: [500, 1000]
+  hidden_dim:
+    values: [128, 256]
+  end_inner_fraction:
+    values: [0, 0.01]
+```
+
+**Running the agent:** After creating the sweep in the UI, run locally from project root: `wandb agent <entity>/CS229_FinalProject/<sweep_id>`.
 
 ## Summary
 

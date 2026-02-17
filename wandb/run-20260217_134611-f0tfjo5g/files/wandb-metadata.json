@@ -1,0 +1,35 @@
+{
+  "os":  "Windows-11-10.0.26200-SP0",
+  "python":  "CPython 3.13.11",
+  "startedAt":  "2026-02-17T21:46:11.504798Z",
+  "args":  [
+    "--end_inner_fraction=0",
+    "--end_weight=1",
+    "--epochs=1000",
+    "--hidden_dim=256",
+    "--suite=mt10"
+  ],
+  "program":  "C:\\Users\\nancy\\Desktop\\CS229_FinalProject\\run_sweep.py",
+  "codePath":  "run_sweep.py",
+  "codePathLocal":  "run_sweep.py",
+  "git":  {
+    "remote":  "git@github.com:alee51/CS229_FinalProject.git",
+    "commit":  "d7a542d6a2bd87b1eccaa3d05afb444a7c371e90"
+  },
+  "email":  "nancy.x.bao@gmail.com",
+  "root":  "C:\\Users\\nancy\\Desktop\\CS229_FinalProject",
+  "host":  "NB_Thinkpad_X9",
+  "executable":  "C:\\Users\\nancy\\miniconda3\\python.exe",
+  "cpu_count":  8,
+  "cpu_count_logical":  8,
+  "disk":  {
+    "/":  {
+      "total":  "1021821579264",
+      "used":  "176208633856"
+    }
+  },
+  "memory":  {
+    "total":  "33847832576"
+  },
+  "writerId":  "5ikclmwukny1u9pyk2yishihpddknjri"
+}

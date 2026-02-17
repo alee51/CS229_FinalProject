@@ -68,7 +68,7 @@ python train.py --approach baseline
 ```
 
 - Defaults are loaded from **`baseline/train_config.yaml`** (single source of truth); override with CLI flags.
-- **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, overnight MT-10 sweeps, and config.
+- **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, overnight MT-10 sweeps, and config. To create sweeps from the W&B web UI instead of YAML, see WANDB.md (Create a sweep from the W&B web UI).
 - Saves to `baseline/models/cloned_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS_*.pth`.
 
 **Common options:**

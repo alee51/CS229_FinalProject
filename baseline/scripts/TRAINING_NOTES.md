@@ -2,6 +2,8 @@ TRAINING_NOTES.md
 
 ### Current Status
 Trying to improve baseline for mt-10 slightly
+- With the overnight sweep, found 65% for 256x256, 500 epochs, end_inner_weight being 0. Going to try setting all end fractions to 0 by default now. 
+- 73% for 256 x 256, 1000 epochs, no end_frac or end_inner_frac. lever-pull stuck at 0; reach is 22; window-open is 76, even tho other models had 100% on window-open. 
 
 ###### How to further improve
 - Add weights & biases integration

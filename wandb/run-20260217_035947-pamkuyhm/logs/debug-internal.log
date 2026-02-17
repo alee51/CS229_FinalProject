@@ -1,0 +1,12 @@
+{"time":"2026-02-17T03:59:50.0406447-08:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-02-17T03:59:50.2818259-08:00","level":"INFO","msg":"stream: created new stream","id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:50.2818259-08:00","level":"INFO","msg":"handler: started","stream_id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:50.2828971-08:00","level":"INFO","msg":"stream: started","id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:50.2834191-08:00","level":"INFO","msg":"sender: started","stream_id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:50.2834191-08:00","level":"INFO","msg":"writer: started","stream_id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:51.8064232-08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-17T03:59:51.9182865-08:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-02-17T03:59:51.9253602-08:00","level":"INFO","msg":"stream: closing","id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:51.9253602-08:00","level":"INFO","msg":"handler: closed","stream_id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:51.9260312-08:00","level":"INFO","msg":"sender: closed","stream_id":"pamkuyhm"}
+{"time":"2026-02-17T03:59:51.9260312-08:00","level":"INFO","msg":"stream: closed","id":"pamkuyhm"}

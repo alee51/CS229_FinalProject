@@ -6,11 +6,11 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 
 | run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |
 |----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|
-| cloned_policy.pth | 300 | 1.0 | — | yes | 11665.6845 | 530.1s | MT10 reach: 18.0% | avg: 59.0% |
-| cloned_policy.pth | 300 | 1.0 | — | yes | 19098.3459 | 275.7s | MT10 reach: 20.0% | avg: 53.0% |
-| cloned_policy.pth | 100 | 1.0 | — | yes | 22534.7907 | 98.1s | MT10 reach: 6.0% | avg: 53.8% |
-| cloned_policy.pth | 100 | 1.0 | — | yes | 28616.2095 | 92.7s | MT10 reach: 2.0% | avg: 52.0% |
-| cloned_policy.pth | 300 | 1.0 | — | yes | 11918.6596 | 296.1s | MT10 reach: 22.0% | avg: 62.4% |
+| cloned_policy.pth | 100 | 3.0 | — | yes | 30024.0584 | 140.9s | MT10 reach: 2.0% | avg: 53.8% |
+| cloned_policy.pth | 1000 | 1 | — | yes | 3816.4123 | 3120.4s | MT10 reach: 22.0% | avg: 73.0% |
+| cloned_policy.pth | 1000 | 1 | — | yes | 6672.5581 | 28082.6s | MT10 reach: 14.0% | avg: 49.0% |
+| cloned_policy.pth | 1000 | 1 | — | yes | 6541.1687 | 1905.8s | MT10 reach: 14.0% | avg: 52.2% |
+| cloned_policy.pth | 500 | 1 | — | yes | 5886.6542 | 1274.5s | MT10 reach: 18.0% | avg: 65.0% |
 
 ---
 
@@ -18,6 +18,15 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 
 | run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |
 |----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|
+| cloned_policy.pth | 500 | 1 | — | yes | 6260.9853 | 1265.6s | MT10 reach: 20.0% | avg: 36.4% |
+| cloned_policy.pth | 500 | 1 | — | yes | 8580.7686 | 971.7s | MT10 reach: 16.0% | avg: 52.8% |
+| cloned_policy.pth | 500 | 1 | — | yes | 9279.9961 | 982.3s | MT10 reach: 14.0% | avg: 47.8% |
+| cloned_policy.pth | 500 | 1 | — | yes | 8808.9290 | 976.9s | MT10 reach: 42.0% | avg: 56.6% |
+| cloned_policy.pth | 300 | 1.0 | — | yes | 11665.6845 | 530.1s | MT10 reach: 18.0% | avg: 59.0% |
+| cloned_policy.pth | 300 | 1.0 | — | yes | 19098.3459 | 275.7s | MT10 reach: 20.0% | avg: 53.0% |
+| cloned_policy.pth | 100 | 1.0 | — | yes | 22534.7907 | 98.1s | MT10 reach: 6.0% | avg: 53.8% |
+| cloned_policy.pth | 100 | 1.0 | — | yes | 28616.2095 | 92.7s | MT10 reach: 2.0% | avg: 52.0% |
+| cloned_policy.pth | 300 | 1.0 | — | yes | 11918.6596 | 296.1s | MT10 reach: 22.0% | avg: 62.4% |
 | cloned_policy.pth | 300 | 1.0 | — | yes | 19776.9624 | 281.5s | MT10 reach: 6.0% | avg: 50.2% |
 | cloned_policy.pth | 100 | 1.0 | — | yes | 21748.8228 | 93.2s | MT10 reach: 18.0% | avg: 50.0% |
 | cloned_policy.pth | 100 | 1.0 | — | yes | 26373.4154 | 108.0s | MT10 reach: 4.0% | avg: 46.2% |
