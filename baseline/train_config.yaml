@@ -37,5 +37,5 @@ device: auto
 
 # W&B (only used when baseline/scripts/train.py is run with use_wandb=True)
 use_wandb: true
-wandb_project: cs229-metaworld
+wandb_project: CS229_FinalProject
 wandb_save_model: false

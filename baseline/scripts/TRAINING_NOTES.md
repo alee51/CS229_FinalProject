@@ -87,3 +87,9 @@ Training the same model on mt-10 gives 100% on drawer open, drawer close, window
 - window-open-v3: 100.0%
 </details>
 
+<details>
+    <summary> mt-10 baseline improved 62.4% 128x128; 300 epochs; 0.01 end_inner_fraction </summary>
+this is the new baseline; outperforms all others in its sweep of [64, 128], [100, 300] epochs, [0.01, 0.005, 0.05] end_inner_fraction. It even outperforms the 64x64 500 epoch baseline for mt10. 
+</details>
+<details>
+

@@ -96,10 +96,10 @@ Examples:
     if args.approach == "baseline":
         base_cfg = load_train_config(args.config) if hasattr(load_train_config, "__call__") else cfg
         use_wandb = not args.no_wandb and base_cfg.get("use_wandb", True)
-        wandb_project = base_cfg.get("wandb_project") or "cs229-metaworld"
+        wandb_project = base_cfg.get("wandb_project") or "CS229_FinalProject"
     else:
         use_wandb = not args.no_wandb
-        wandb_project = "cs229-metaworld"
+        wandb_project = "CS229_FinalProject"
 
     print(f"\n{'='*70}")
     print("Training Policy")

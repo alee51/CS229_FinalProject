@@ -1,0 +1,12 @@
+wandb_version: 1
+
+end_inner_fraction:
+  value: 0.01
+end_weight:
+  value: 1
+epochs:
+  value: 1000
+hidden_dim:
+  value: 128
+suite:
+  value: mt10

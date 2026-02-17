@@ -1,0 +1,12 @@
+[34m[1mwandb[0m: [33mWARNING[0m Config item 'epochs' was locked by 'sweep' (ignored update).
+[34m[1mwandb[0m: [33mWARNING[0m Config item 'end_weight' was locked by 'sweep' (ignored update).
+[34m[1mwandb[0m: [33mWARNING[0m Config item 'end_inner_fraction' was locked by 'sweep' (ignored update).
+[34m[1mwandb[0m: [33mWARNING[0m Config item 'suite' was locked by 'sweep' (ignored update).
+Training on 35444 samples
+
+Training: LR=0.0003, Epochs=1000, Batch=64
+LR decay: every 250 epochs × 0.5
+Hidden sizes: [256, 256], Clip actions: True
+
+Epoch 50/1000 | Loss: 0.024456
+[34m[1mwandb[0m: [33mWARNING[0m Fatal error while uploading data. Some run data will not be synced, but it will still be written to disk. Use `wandb sync` at the end of the run to try uploading.

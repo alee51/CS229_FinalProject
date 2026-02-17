@@ -227,6 +227,45 @@ class ClonePolicy(nn.Module):
     def forward(self, x):
         return self.net(x)
 
+
+def infer_baseline_policy_architecture(model_path):
+    """Load a baseline .pth once and return (input_dim, output_dim, hidden_sizes, state_dict).
+    Callers can build ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes) and
+    load_state_dict(state_dict) without reading the file again.
+    MT-50 ready: input_dim is taken from the checkpoint, so MT1 (39), MT10 (49), or MT50
+    (when added) are supported without code changes.
+    """
+    import re
+    try:
+        ckpt = torch.load(model_path, map_location="cpu", weights_only=True)
+    except TypeError:
+        ckpt = torch.load(model_path, map_location="cpu")
+    state = ckpt.get("state_dict", ckpt) if isinstance(ckpt, dict) else ckpt
+    if not isinstance(state, dict):
+        raise ValueError(f"Checkpoint at {model_path} is not a state_dict or dict with 'state_dict'")
+    # Optional: use saved metadata if present (future extended format)
+    if isinstance(ckpt, dict) and "hidden_sizes" in ckpt and "input_dim" in ckpt and "output_dim" in ckpt:
+        return (
+            ckpt["input_dim"],
+            ckpt["output_dim"],
+            ckpt["hidden_sizes"],
+            ckpt.get("state_dict", state),
+        )
+    # Infer from ClonePolicy's net.0, net.2, net.4, ... (Linear layers at even indices)
+    weight_keys = [k for k in state if re.match(r"net\.\d+\.weight", k)]
+    even_indices = sorted([int(k.split(".")[1]) for k in weight_keys if int(k.split(".")[1]) % 2 == 0])
+    if not even_indices:
+        raise ValueError(f"Checkpoint at {model_path} has no 'net.<even>.weight' keys (not a ClonePolicy?)")
+    ordered = [f"net.{i}.weight" for i in sorted(even_indices)]
+    for k in ordered:
+        if k not in state:
+            raise ValueError(f"Checkpoint at {model_path} missing key {k}")
+    input_dim = state["net.0.weight"].shape[1]
+    output_dim = state[ordered[-1]].shape[0]
+    hidden_sizes = [state[k].shape[0] for k in ordered[:-1]]
+    return (input_dim, output_dim, hidden_sizes, state)
+
+
 def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes=None,
                 save_name='cloned_policy.pth', clip_actions=True, data_path=None,
                 end_weight=3.0, end_fraction=0.3, end_inner_weight=None, end_inner_fraction=0.0,
@@ -240,7 +279,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         suite: 'mt1', 'mt10', or 'mt50'. If None, defaults to 'mt1'.
         use_wandb: If True, log to W&B (enabled by default; use --no-wandb to disable).
         wandb_tags: Optional list of tags for the run.
-        wandb_project: W&B project name (default from config or 'cs229-metaworld').
+        wandb_project: W&B project name (default from config or 'CS229_FinalProject').
         wandb_save_model: If True, upload final checkpoint as W&B artifact.
     """
     if suite is None:
@@ -280,7 +319,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             if end_inner_weight is not None and end_inner_fraction and end_inner_fraction > 0:
                 name_parts.append(f"inner{int(end_inner_weight)}x{int(end_inner_fraction*100)}")
             run_name = "-".join(name_parts)
-            proj = wandb_project or "cs229-metaworld"
+            proj = wandb_project or "CS229_FinalProject"
             approach = "baseline"
             wandb_tags_list = [approach, suite] + list(wandb_tags or [])
             run = wandb.init(project=proj, name=run_name, job_type="train", tags=wandb_tags_list, reinit=True)
@@ -531,7 +570,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         if run is not None and use_wandb and training_run_id is not None:
             try:
                 import wandb
-                proj = wandb_project or "cs229-metaworld"
+                proj = wandb_project or "CS229_FinalProject"
                 approach = "baseline"
                 # Use actual saved run file (run_path), not save_name, for model identity
                 model_stem = os.path.splitext(os.path.basename(run_path))[0]
@@ -720,7 +759,7 @@ if __name__ == "__main__":
         cfg = load_train_config(args.config)
         # Re-apply CLI overrides are already in args
     use_wandb = not args.no_wandb and cfg.get("use_wandb", True)
-    wandb_project = cfg.get("wandb_project") or "cs229-metaworld"
+    wandb_project = cfg.get("wandb_project") or "CS229_FinalProject"
 
     train_model(
         learning_rate=args.lr,

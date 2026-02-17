@@ -16,7 +16,7 @@ from baseline.tasks import get_tasks
 
 def main():
     parser = argparse.ArgumentParser(description="Log W&B scale-anchor runs for MT10 parallel plot 0-100% scaling")
-    parser.add_argument("--project", type=str, default="cs229-metaworld", help="W&B project name")
+    parser.add_argument("--project", type=str, default="CS229_FinalProject", help="W&B project name")
     args = parser.parse_args()
 
     task_list = get_tasks("mt10")

@@ -20,7 +20,7 @@ _PROJECT_ROOT = os.path.dirname(_BASELINE_DIR)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 sys.path.insert(0, _SCRIPT_DIR)
-from train import ClonePolicy, MT10_TASKS, one_hot_task, get_device
+from train import ClonePolicy, MT10_TASKS, one_hot_task, get_device, infer_baseline_policy_architecture
 from baseline.tasks import get_tasks, policy_input_dim
 
 # #region agent log
@@ -79,8 +79,9 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
 
     t_load_start = time.perf_counter()
     try:
-        model = ClonePolicy(39, 4)
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+        model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+        model.load_state_dict(state_dict)
         model = model.to(device)
     except Exception as e:
         print(f"❌ Failed to load model '{model_path}': {e}")
@@ -177,13 +178,13 @@ def test_policy_multitask(model_path, suite="mt10", clip_actions=True, seed=42, 
         device = get_device("auto")
     if not os.path.isabs(model_path) and not os.path.exists(model_path):
         model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
-    in_dim = policy_input_dim(suite)
     task_list = get_tasks(suite)
     n_tasks = len(task_list)
     t_load_start = time.perf_counter()
     try:
-        model = ClonePolicy(in_dim, 4)
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+        model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+        model.load_state_dict(state_dict)
         model = model.to(device)
     except Exception as e:
         print(f"Failed to load model '{model_path}': {e}")
@@ -334,11 +335,11 @@ def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=Tr
         device = get_device("auto")
     if not os.path.isabs(model_path) and not os.path.exists(model_path):
         model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
-    in_dim = policy_input_dim(suite)
     n_tasks = len(task_list)
     try:
-        model = ClonePolicy(in_dim, 4)
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+        model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+        model.load_state_dict(state_dict)
         model = model.to(device)
     except Exception as e:
         print(f"❌ Failed to load model '{model_path}': {e}")
@@ -488,8 +489,9 @@ def test_policy_parallel_visualize(model_path, n_parallel=5, task_name='reach-v3
         print(f"❌ Failed to load task '{task_name}': {e}")
         return None
     try:
-        model = ClonePolicy(39, 4)
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+        model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+        model.load_state_dict(state_dict)
         model = model.to(device)
     except Exception as e:
         print(f"❌ Failed to load model '{model_path}': {e}")

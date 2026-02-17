@@ -69,7 +69,7 @@ def _load_baseline_test():
 
 def _log_test_to_wandb(use_wandb, approach, model, task_or_suite, episodes, seed, clip_actions,
                        result_single=None, result_mt=None, task_list=None, device=None, tags=None):
-    """Log a test run to W&B (project cs229-metaworld, job_type=eval). No-op if use_wandb is False or no result."""
+    """Log a test run to W&B (project CS229_FinalProject, job_type=eval). No-op if use_wandb is False or no result."""
     if not use_wandb:
         return
     if result_single is None and result_mt is None:
@@ -81,7 +81,7 @@ def _log_test_to_wandb(use_wandb, approach, model, task_or_suite, episodes, seed
         suite = "mt1" if result_single is not None else task_or_suite
         run_name = f"eval-mt1-{task_or_suite}-{model_stem}-{episodes}ep" if result_single is not None else f"eval-{task_or_suite}-{model_stem}-{episodes}ep"
         wandb_tags_list = [approach, suite] + list(tags or [])
-        run = wandb.init(project="cs229-metaworld", job_type="eval", name=run_name, tags=wandb_tags_list, reinit=True)
+        run = wandb.init(project="CS229_FinalProject", job_type="eval", name=run_name, tags=wandb_tags_list, reinit=True)
         wandb.config.update({
             "approach": approach,
             "suite": suite,
@@ -173,12 +173,18 @@ def test_policy(approach, model_name, num_episodes=50, task_name='reach-v3',
             print("Warning: render_mode not supported by this env; running without visualization.")
     
     try:
-        model = ClonePolicy(39, 4)
-        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+        if approach == 'baseline':
+            from train import infer_baseline_policy_architecture
+            input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+            model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+            model.load_state_dict(state_dict)
+        else:
+            model = ClonePolicy(39, 4)
+            model.load_state_dict(torch.load(model_path, map_location="cpu"))
     except Exception as e:
         print(f"Failed to load model '{model_path}': {e}")
         return None
-    
+
     model.eval()
     success_count = 0
     episode_results = []  # (goal_idx, success)
@@ -353,12 +359,18 @@ def test_policy_parallel_visualize(approach, model_name, n_parallel=5, task_name
         return None
 
     try:
-        model = ClonePolicy(39, 4)
-        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+        if approach == 'baseline':
+            from train import infer_baseline_policy_architecture
+            input_dim, output_dim, hidden_sizes, state_dict = infer_baseline_policy_architecture(model_path)
+            model = ClonePolicy(input_dim, output_dim, hidden_sizes=hidden_sizes)
+            model.load_state_dict(state_dict)
+        else:
+            model = ClonePolicy(39, 4)
+            model.load_state_dict(torch.load(model_path, map_location="cpu"))
     except Exception as e:
         print(f"Failed to load model: {e}")
-        for e in envs:
-            e.close()
+        for env in envs:
+            env.close()
         return None
 
     model.eval()
@@ -474,12 +486,16 @@ Examples:
     parser.add_argument('--device', type=str, default='auto', choices=['auto', 'cuda', 'xpu', 'cpu'],
                         help='Device for baseline (default: auto); ignored for other approaches')
     parser.add_argument('--no-wandb', action='store_true',
-                        help='Disable W&B logging for this test run')
+                        help='Disable W&B logging for this test run. W&B is also disabled automatically when using any visualization option (--visualize, --visualize-parallel, --visualize-series, --visualize-success-fail).')
     parser.add_argument('--wandb-tag', type=str, action='append', default=None, metavar='KEY:VALUE',
                         help='Tag for W&B (repeatable, e.g. --wandb-tag model:mt10-500ep)')
     
     args = parser.parse_args()
     args.model = resolve_model_name(args.approach, args.model)
+
+    # W&B is disabled when user passes --no-wandb or when any visualization/watch mode is active
+    is_visualize_mode = (args.visualize or args.visualize_parallel > 0 or args.visualize_series > 0 or args.visualize_success_fail > 0)
+    args.use_wandb = not args.no_wandb and not is_visualize_mode
 
     # Option A: single entrypoint — delegate all baseline testing to baseline/scripts/test.py
     if args.approach == 'baseline':
@@ -524,7 +540,7 @@ Examples:
             if result is not None:
                 print(f"\nOverall success rate: {result:.2f}%")
                 _log_test_to_wandb(
-                    use_wandb=not args.no_wandb,
+                    use_wandb=args.use_wandb,
                     approach=args.approach,
                     model=args.model,
                     task_or_suite=args.suite if args.suite in ("mt10", "mt50") else args.task,
@@ -552,7 +568,7 @@ Examples:
             if result is not None:
                 print(f"\nSUCCESS RATE (this run): {result:.2f}%")
                 _log_test_to_wandb(
-                    use_wandb=not args.no_wandb,
+                    use_wandb=args.use_wandb,
                     approach=args.approach,
                     model=args.model,
                     task_or_suite=args.task,
@@ -594,7 +610,7 @@ Examples:
                 print(f"Average success rate: {avg:.2f}%")
                 print(f"{'='*70}\n")
                 _log_test_to_wandb(
-                    use_wandb=not args.no_wandb,
+                    use_wandb=args.use_wandb,
                     approach=args.approach,
                     model=args.model,
                     task_or_suite=args.suite,
@@ -645,7 +661,7 @@ Examples:
             print(f"SUCCESS RATE: {result:.2f}%")
             print(f"{'='*70}\n")
             _log_test_to_wandb(
-                use_wandb=not args.no_wandb,
+                use_wandb=args.use_wandb,
                 approach=args.approach,
                 model=args.model,
                 task_or_suite=args.task,
@@ -676,7 +692,7 @@ Examples:
         if result is not None:
             print(f"\nOverall success rate: {result:.2f}%")
             _log_test_to_wandb(
-                use_wandb=not args.no_wandb,
+                use_wandb=args.use_wandb,
                 approach=args.approach,
                 model=args.model,
                 task_or_suite=args.task,
@@ -707,7 +723,7 @@ Examples:
         if result is not None:
             print(f"\nSUCCESS RATE (this run): {result:.2f}%")
             _log_test_to_wandb(
-                use_wandb=not args.no_wandb,
+                use_wandb=args.use_wandb,
                 approach=args.approach,
                 model=args.model,
                 task_or_suite=args.task,
@@ -752,7 +768,7 @@ Examples:
         print(f"SUCCESS RATE: {result:.2f}%")
         print(f"{'='*70}\n")
         _log_test_to_wandb(
-            use_wandb=not args.no_wandb,
+            use_wandb=args.use_wandb,
             approach=args.approach,
             model=args.model,
             task_or_suite=args.task,

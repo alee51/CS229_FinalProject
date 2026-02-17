@@ -1,0 +1,158 @@
+2026-02-17 03:16:32 INFO Running runs: []
+2026-02-17 03:16:33 INFO Agent received command: run
+2026-02-17 03:16:33 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:33 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:37 INFO Running runs: []
+2026-02-17 03:16:38 INFO Agent received command: run
+2026-02-17 03:16:38 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:38 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:38 INFO Running runs: ['w59fix08']
+2026-02-17 03:16:38 INFO Cleaning up finished run: w59fix08
+2026-02-17 03:16:39 INFO Agent received command: run
+2026-02-17 03:16:39 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:16:39 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:16:43 INFO Running runs: ['k02ikp4v']
+2026-02-17 03:16:43 INFO Cleaning up finished run: k02ikp4v
+2026-02-17 03:16:43 INFO Agent received command: run
+2026-02-17 03:16:43 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:43 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:44 INFO Running runs: ['ksvzqrsm']
+2026-02-17 03:16:44 INFO Cleaning up finished run: ksvzqrsm
+2026-02-17 03:16:44 INFO Agent received command: run
+2026-02-17 03:16:44 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:44 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:48 INFO Running runs: ['ba5mqo0z']
+2026-02-17 03:16:48 INFO Cleaning up finished run: ba5mqo0z
+2026-02-17 03:16:49 INFO Running runs: ['455ngbrg']
+2026-02-17 03:16:49 ERROR Detected 3 failed runs in the first 60 seconds, shutting down.
+2026-02-17 03:16:49 INFO To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+2026-02-17 03:16:55 INFO Running runs: []
+2026-02-17 03:19:06 INFO Running runs: []
+2026-02-17 03:19:07 INFO Agent received command: run
+2026-02-17 03:19:07 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:19:07 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:19:12 INFO Running runs: ['e7a270mq']
+2026-02-17 03:19:12 INFO Cleaning up finished run: e7a270mq
+2026-02-17 03:19:13 INFO Agent received command: run
+2026-02-17 03:19:13 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:19:13 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:19:18 INFO Running runs: ['qu0dh26m']
+2026-02-17 03:19:18 INFO Cleaning up finished run: qu0dh26m
+2026-02-17 03:19:23 INFO Running runs: []
+2026-02-17 03:25:30 INFO Running runs: []
+2026-02-17 03:26:47 INFO Running runs: []
+2026-02-17 03:26:48 INFO Agent received command: run
+2026-02-17 03:26:48 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:26:48 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:26:53 INFO Running runs: ['q4noeq8f']
+2026-02-17 03:26:53 INFO Cleaning up finished run: q4noeq8f
+2026-02-17 03:26:54 INFO Agent received command: run
+2026-02-17 03:26:54 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:26:54 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:26:59 INFO Running runs: ['nivfxjh2']
+2026-02-17 03:26:59 INFO Cleaning up finished run: nivfxjh2
+2026-02-17 03:27:04 INFO Running runs: []
+2026-02-17 03:28:02 INFO Running runs: []
+2026-02-17 03:29:06 INFO Running runs: []
+2026-02-17 03:29:06 INFO Agent received command: run
+2026-02-17 03:29:06 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:29:06 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:29:11 INFO Running runs: ['wutxbouh']
+2026-02-17 03:29:11 INFO Cleaning up finished run: wutxbouh
+2026-02-17 03:29:12 INFO Agent received command: run
+2026-02-17 03:29:12 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:29:12 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:29:17 INFO Running runs: ['24ky67js']
+2026-02-17 03:29:17 INFO Cleaning up finished run: 24ky67js
+2026-02-17 03:29:18 INFO Agent received command: run
+2026-02-17 03:29:18 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:29:18 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:29:23 INFO Running runs: ['0cezgp6c']
+2026-02-17 03:29:23 ERROR Detected 3 failed runs in the first 60 seconds, shutting down.
+2026-02-17 03:29:23 INFO To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+2026-02-17 03:31:06 INFO Running runs: []
+2026-02-17 03:31:07 INFO Agent received command: run
+2026-02-17 03:31:07 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:31:07 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=256 --suite=mt10
+2026-02-17 03:31:12 INFO Running runs: ['iwugus7a']
+2026-02-17 03:33:20 ERROR Error executing GraphQL.
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api.wandb.ai/graphql

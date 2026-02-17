@@ -68,7 +68,7 @@ python train.py --approach baseline
 ```
 
 - Defaults are loaded from **`baseline/train_config.yaml`** (single source of truth); override with CLI flags.
-- **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, and config.
+- **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, overnight MT-10 sweeps, and config.
 - Saves to `baseline/models/cloned_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS_*.pth`.
 
 **Common options:**
@@ -131,6 +131,8 @@ python test.py --approach baseline --model cloned_policy.pth --episodes 50 --see
 - Run checkpoints use descriptive names: `baseline/models/runs/run_YYYYMMDD_HHMMSS_end3_inner5x10_noclip.pth` (end weight, inner tier, clip/noclip).
 - `latest-upsampled-end`: resolves to the **latest run with end_weight ≠ 1** in `baseline/training_runs.json`.
 
+**Model architecture (MT-50 ready):** Policy input dimension and hidden sizes are **inferred from the checkpoint**, not hardcoded. So you can test models trained with any architecture (e.g. 128×128 hidden layers) or suite (MT1 39-dim, MT10 49-dim). When you add MT-50, train with that suite and test with the same checkpoint—no test script changes needed.
+
 **Other test modes:**
 
 ```bash
@@ -146,9 +148,10 @@ python test.py --approach baseline --model latest.pth --visualize-parallel 5
 
 ### Testing an MT-10 model
 
-From project root, use **`--suite mt10`** to run a **49-dim** multi-task policy over all 10 MT-10 tasks (50 episodes per task, 1 per goal):
+From project root, use **`--suite mt10`** to run a **49-dim** multi-task policy over all 10 MT-10 tasks (50 episodes per task, 1 per goal). The **MT-10 baseline** is `mt10_baseline.pth` (300 ep, 128×128, end_inner 0.01):
 
 ```bash
+python test.py --approach baseline --model mt10_baseline.pth --suite mt10
 python test.py --approach baseline --model runs/run_YYYYMMDD_HHMMSS_end1_clip_mt10.pth --suite mt10
 ```
 
@@ -255,7 +258,7 @@ python check_data_len.py   # if present: prints trajectory count and total sampl
 | Collect expert (MT-10) | `cd baseline/scripts; python collect_one_per_goal.py --mt10` |
 | Train             | `python train.py --approach baseline` |
 | Eval 50 goals     | `python test.py --approach baseline --model latest.pth --episodes 50 --seed 42` |
-| **Eval MT-10 model** | `python test.py --approach baseline --model runs/run_YYYYMMDD_HHMMSS.pth --suite mt10` |
+| **Eval MT-10 model** | `python test.py --approach baseline --model mt10_baseline.pth --suite mt10` (or `runs/run_*.pth`) |
 | View 3 success + 3 fail | `python test.py --approach baseline --model latest.pth --seed 42 --visualize-success-fail 3 --task reach-v3` |
 | View 3/3 (MT-10, one task) | `python test.py --approach baseline --model <mt10>.pth --suite mt10 --visualize-success-fail 3 --task door-open-v3` |
 | View 3/3 (upsampled-end model) | `python test.py --approach baseline --model latest-upsampled-end --visualize-success-fail 3 --task reach-v3` |
