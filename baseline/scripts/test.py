@@ -13,9 +13,15 @@ import sys
 import os
 import traceback
 
-# Add parent directory to path so we can import train module
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add project root so we can import baseline.tasks and baseline/scripts/train
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_BASELINE_DIR = os.path.dirname(_SCRIPT_DIR)
+_PROJECT_ROOT = os.path.dirname(_BASELINE_DIR)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+sys.path.insert(0, _SCRIPT_DIR)
 from train import ClonePolicy, MT10_TASKS, one_hot_task, get_device
+from baseline.tasks import get_tasks, policy_input_dim
 
 # #region agent log
 _DEBUG_LOG = r"c:\Users\nancy\Desktop\CS229_FinalProject\.cursor\debug.log"
@@ -55,8 +61,7 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
 
     # Resolve model path - if relative, look in ../models/
     if not os.path.isabs(model_path) and not os.path.exists(model_path):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(script_dir, '..', 'models', model_path)
+        model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
 
     try:
         mt1 = metaworld.MT1(task_name)
@@ -164,21 +169,24 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
     return success_rate
 
 
-def test_policy_mt10(model_path, clip_actions=True, seed=42, verbose=False, device=None):
-    """Test a 49-dim MT-10 policy: 50 episodes (1 per goal) per task, 10 tasks. Returns per-task success rates and average. clip_actions defaults True to match train.py."""
+def test_policy_multitask(model_path, suite="mt10", clip_actions=True, seed=42, verbose=False, device=None):
+    """Test a multi-task policy: 50 episodes (1 per goal) per task. suite in mt10, mt50.
+    Returns per-task success rates and average. clip_actions defaults True to match train.py."""
     t_start = time.perf_counter()
     if device is None:
         device = get_device("auto")
     if not os.path.isabs(model_path) and not os.path.exists(model_path):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(script_dir, '..', 'models', model_path)
+        model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
+    in_dim = policy_input_dim(suite)
+    task_list = get_tasks(suite)
+    n_tasks = len(task_list)
     t_load_start = time.perf_counter()
     try:
-        model = ClonePolicy(49, 4)
+        model = ClonePolicy(in_dim, 4)
         model.load_state_dict(torch.load(model_path, map_location=device))
         model = model.to(device)
     except Exception as e:
-        print(f"❌ Failed to load model '{model_path}': {e}")
+        print(f"Failed to load model '{model_path}': {e}")
         return None
     t_load_end = time.perf_counter()
     model.eval()
@@ -196,7 +204,7 @@ def test_policy_mt10(model_path, clip_actions=True, seed=42, verbose=False, devi
     success_per_task = []
     task_times = []
     t_rollout_start = time.perf_counter()
-    for task_id, task_name in enumerate(MT10_TASKS):
+    for task_id, task_name in enumerate(task_list):
         t_task_start = time.perf_counter()
         try:
             mt1 = metaworld.MT1(task_name)
@@ -206,7 +214,7 @@ def test_policy_mt10(model_path, clip_actions=True, seed=42, verbose=False, devi
             success_per_task.append(0.0)
             task_times.append(0.0)
             continue
-        oh = one_hot_task(task_id)
+        oh = one_hot_task(task_id, num_tasks=n_tasks)
         n_goals = min(50, len(mt1.train_tasks))
         success_count = 0
         for goal_idx in range(n_goals):
@@ -256,12 +264,17 @@ def test_policy_mt10(model_path, clip_actions=True, seed=42, verbose=False, devi
     total_s = t_end - t_start
     load_s = t_load_end - t_load_start
     rollout_s = t_end - t_rollout_start
-    total_episodes = 10 * 50
+    total_episodes = n_tasks * 50
     print(f"\nTiming: total={total_s:.2f}s  model_load={load_s:.2f}s  rollout={rollout_s:.2f}s  episodes/sec={total_episodes/rollout_s:.1f}")
     print("Per-task time (s):")
-    for name, sec in zip(MT10_TASKS, task_times):
+    for name, sec in zip(task_list, task_times):
         print(f"  {name}: {sec:.2f}s")
     return success_per_task, avg
+
+
+def test_policy_mt10(model_path, clip_actions=True, seed=42, verbose=False, device=None):
+    """Backward-compat: test_policy_multitask(..., suite='mt10')."""
+    return test_policy_multitask(model_path, suite="mt10", clip_actions=clip_actions, seed=seed, verbose=verbose, device=device)
 
 
 def visualize_success_fail(model_path, n_each=3, task_name='reach-v3', clip_actions=True, seed=42, device=None):
@@ -309,20 +322,22 @@ def visualize_success_fail(model_path, n_each=3, task_name='reach-v3', clip_acti
     return rate
 
 
-def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=True, seed=42, device=None):
-    """Run 50 episodes (no render) for one MT-10 task, then show n_each success + n_each fail with render.
-    Uses 49-dim policy (obs + one-hot task). Returns overall success rate for that task or None on failure."""
-    if task_name not in MT10_TASKS:
-        print(f"Task '{task_name}' not found for MT-10. Valid tasks: {', '.join(MT10_TASKS)}.")
+def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=True, seed=42, device=None, suite="mt10"):
+    """Run 50 episodes (no render) for one multi-task suite task, then show n_each success + n_each fail with render.
+    Uses policy_input_dim(suite). Returns overall success rate for that task or None on failure."""
+    task_list = get_tasks(suite)
+    if task_name not in task_list:
+        print(f"Task '{task_name}' not found for {suite}. Valid tasks: {', '.join(task_list)}.")
         return None
     print("Eval 50 goals (no render), then show {} success + {} fail in same run.\n".format(n_each, n_each))
     if device is None:
         device = get_device("auto")
     if not os.path.isabs(model_path) and not os.path.exists(model_path):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        model_path = os.path.join(script_dir, '..', 'models', model_path)
+        model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
+    in_dim = policy_input_dim(suite)
+    n_tasks = len(task_list)
     try:
-        model = ClonePolicy(49, 4)
+        model = ClonePolicy(in_dim, 4)
         model.load_state_dict(torch.load(model_path, map_location=device))
         model = model.to(device)
     except Exception as e:
@@ -340,8 +355,8 @@ def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=Tr
                 xpu.manual_seed_all(seed)
             except Exception:
                 pass
-    task_id = MT10_TASKS.index(task_name)
-    oh = one_hot_task(task_id)
+    task_id = task_list.index(task_name)
+    oh = one_hot_task(task_id, num_tasks=n_tasks)
     try:
         mt1 = metaworld.MT1(task_name)
         env_cls = mt1.train_classes[task_name]
@@ -553,8 +568,8 @@ if __name__ == "__main__":
     parser.add_argument('--model', type=str, required=True, help='Path or name of the policy model (.pth file)')
     parser.add_argument('--episodes', type=int, default=100, help='Number of test episodes (default: 100); for --suite mt10 fixed at 50 per task')
     parser.add_argument('--task', type=str, default='reach-v3', help='MetaWorld task name (default: reach-v3); ignored if --suite mt10')
-    parser.add_argument('--suite', type=str, choices=['mt1', 'mt10'], default='mt1',
-                        help='mt1: single task (39-dim). mt10: all 10 tasks, 50 goals each (49-dim policy)')
+    parser.add_argument("--suite", type=str, choices=["mt1", "mt10", "mt50"], default="mt1",
+                        help="mt1: single task (39-dim). mt10/mt50: multi-task, 50 goals per task (policy_input_dim from suite)")
     parser.add_argument('--seed', type=int, default=None, help='Env seed for reproducibility (used with 50-goal eval)')
     parser.add_argument('--no-clip', action='store_true', help='Do not clip actions (default: clip to [-1, 1], same as train.py)')
     parser.add_argument('--verbose', type=int, default=0, help='Print progress every N episodes (0=off)')
@@ -578,9 +593,10 @@ if __name__ == "__main__":
     print(f"Device:          {device}")
     print(f"{'='*60}\n")
     
-    if args.suite == 'mt10':
-        result = test_policy_mt10(
+    if args.suite in ("mt10", "mt50"):
+        result = test_policy_multitask(
             model_path=args.model,
+            suite=args.suite,
             clip_actions=not args.no_clip,
             seed=args.seed,
             verbose=args.verbose,
@@ -588,12 +604,13 @@ if __name__ == "__main__":
         )
         if result is not None:
             success_per_task, avg = result
+            task_list = get_tasks(args.suite)
             print("\nPer-task success rate (%):")
-            for name, rate in zip(MT10_TASKS, success_per_task):
+            for name, rate in zip(task_list, success_per_task):
                 print(f"  {name}: {rate:.1f}%")
-            print(f"\n✅ Average success rate: {avg:.2f}%")
+            print(f"\nAverage success rate: {avg:.2f}%")
         else:
-            print("\n❌ Test failed")
+            print("\nTest failed")
     else:
         result = test_policy(
             model_path=args.model,

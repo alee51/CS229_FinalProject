@@ -67,8 +67,9 @@ python baseline/scripts/collect_one_per_goal.py --mt10
 python train.py --approach baseline
 ```
 
-- Default: 500 epochs, LR 0.0003, batch 64, clip actions; end-of-trajectory weight 3.0 (last 30% of each traj weighted 3×). Use `--no-clip` to disable clipping.
-- Saves to `baseline/models/cloned_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS.pth`.
+- Defaults are loaded from **`baseline/train_config.yaml`** (single source of truth); override with CLI flags.
+- **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, and config.
+- Saves to `baseline/models/cloned_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS_*.pth`.
 
 **Common options:**
 

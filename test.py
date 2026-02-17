@@ -67,6 +67,41 @@ def _load_baseline_test():
     return mod
 
 
+def _log_test_to_wandb(use_wandb, approach, model, task_or_suite, episodes, seed, clip_actions,
+                       result_single=None, result_mt=None, task_list=None, device=None, tags=None):
+    """Log a test run to W&B (project cs229-metaworld, job_type=eval). No-op if use_wandb is False or no result."""
+    if not use_wandb:
+        return
+    if result_single is None and result_mt is None:
+        return
+    try:
+        import wandb
+        model_stem = os.path.splitext(os.path.basename(model))[0]
+        run_name = f"eval-{task_or_suite}-{model_stem}-{episodes}ep"
+        run = wandb.init(project="cs229-metaworld", job_type="eval", name=run_name, tags=tags or [], reinit=True)
+        wandb.config.update({
+            "approach": approach,
+            "model": os.path.basename(model),
+            "task_or_suite": task_or_suite,
+            "episodes": episodes,
+            "seed": seed,
+            "clip_actions": clip_actions,
+        }, allow_val_change=True)
+        if device is not None:
+            wandb.config.update({"device": str(device)}, allow_val_change=True)
+        if result_single is not None:
+            wandb.log({"eval/success_rate": result_single})
+        elif result_mt is not None:
+            success_per_task, avg = result_mt
+            wandb.log({"eval/success_rate_avg": avg})
+            if task_list is not None and len(task_list) == len(success_per_task):
+                for i, r in enumerate(success_per_task):
+                    wandb.log({f"eval/success_rate_{task_list[i]}": r})
+        wandb.finish()
+    except Exception as e:
+        print(f"W&B logging skipped: {e}")
+
+
 def load_model_class(approach):
     """Dynamically load the ClonePolicy from the appropriate approach"""
     if approach == 'baseline':
@@ -430,10 +465,14 @@ Examples:
                         help='Eval 50 goals, then show N successes + N failures in same window (e.g. 3)')
     parser.add_argument('--seed', type=int, default=None, metavar='N',
                         help='Seed for env.reset(seed=seed+goal_idx) for reproducible eval; omit for stochastic')
-    parser.add_argument('--suite', type=str, default='mt1', choices=['mt1', 'mt10'],
-                        help='mt1: single task (default). mt10: all 10 MT-10 tasks, 50 goals each (baseline only, 49-dim policy)')
+    parser.add_argument("--suite", type=str, default="mt1", choices=["mt1", "mt10", "mt50"],
+                        help="mt1: single task (default). mt10/mt50: multi-task, 50 goals per task (baseline only)")
     parser.add_argument('--device', type=str, default='auto', choices=['auto', 'cuda', 'xpu', 'cpu'],
                         help='Device for baseline (default: auto); ignored for other approaches')
+    parser.add_argument('--no-wandb', action='store_true',
+                        help='Disable W&B logging for this test run')
+    parser.add_argument('--wandb-tag', type=str, action='append', default=None, metavar='KEY:VALUE',
+                        help='Tag for W&B (repeatable, e.g. --wandb-tag model:mt10-500ep)')
     
     args = parser.parse_args()
     args.model = resolve_model_name(args.approach, args.model)
@@ -459,7 +498,7 @@ Examples:
             print(f"Visualize N success + N fail (N={args.visualize_success_fail})")
             print(f"{'='*70}")
             print(f"Model: {args.model}  Task: {args.task}  Clip: {'Yes' if not args.no_clip else 'No'}\n")
-            if args.suite == 'mt10':
+            if args.suite in ("mt10", "mt50"):
                 result = baseline_eval.visualize_success_fail_mt10(
                     full_model_path,
                     task_name=args.task,
@@ -467,6 +506,7 @@ Examples:
                     clip_actions=not args.no_clip,
                     seed=args.seed if args.seed is not None else 42,
                     device=device,
+                    suite=args.suite,
                 )
             else:
                 result = baseline_eval.visualize_success_fail(
@@ -479,6 +519,18 @@ Examples:
                 )
             if result is not None:
                 print(f"\nOverall success rate: {result:.2f}%")
+                _log_test_to_wandb(
+                    use_wandb=not args.no_wandb,
+                    approach=args.approach,
+                    model=args.model,
+                    task_or_suite=args.suite if args.suite in ("mt10", "mt50") else args.task,
+                    episodes=50,
+                    seed=args.seed,
+                    clip_actions=not args.no_clip,
+                    result_single=result,
+                    device=device,
+                    tags=args.wandb_tag,
+                )
             sys.exit(0 if result is not None else 1)
 
         if args.visualize_parallel > 0:
@@ -495,20 +547,35 @@ Examples:
             )
             if result is not None:
                 print(f"\nSUCCESS RATE (this run): {result:.2f}%")
+                _log_test_to_wandb(
+                    use_wandb=not args.no_wandb,
+                    approach=args.approach,
+                    model=args.model,
+                    task_or_suite=args.task,
+                    episodes=args.visualize_parallel,
+                    seed=args.seed,
+                    clip_actions=not args.no_clip,
+                    result_single=result,
+                    device=device,
+                    tags=args.wandb_tag,
+                )
             sys.exit(0 if result is not None else 1)
 
-        if args.suite == 'mt10':
+        if args.suite in ("mt10", "mt50"):
+            task_list = baseline_eval.get_tasks(args.suite)
+            n_tasks = len(task_list)
             print(f"\n{'='*70}")
-            print(f"Testing Policy (MT-10)")
+            print(f"Testing Policy ({args.suite.upper()})")
             print(f"{'='*70}")
             print(f"Model:           {args.model}")
-            print(f"Suite:           mt10 (50 goals × 10 tasks)")
+            print(f"Suite:           {args.suite} (50 goals x {n_tasks} tasks)")
             print(f"Clip Actions:    {'Yes' if not args.no_clip else 'No'}")
             print(f"Seed:            {args.seed}")
             print(f"Device:          {device}")
             print(f"{'='*70}\n")
-            result = baseline_eval.test_policy_mt10(
+            result = baseline_eval.test_policy_multitask(
                 full_model_path,
+                suite=args.suite,
                 clip_actions=not args.no_clip,
                 seed=args.seed,
                 verbose=args.verbose,
@@ -517,11 +584,24 @@ Examples:
             if result is not None:
                 success_per_task, avg = result
                 print("\nPer-task success rate (%):")
-                for name, rate in zip(baseline_eval.MT10_TASKS, success_per_task):
+                for name, rate in zip(task_list, success_per_task):
                     print(f"  {name}: {rate:.1f}%")
                 print(f"\n{'='*70}")
                 print(f"Average success rate: {avg:.2f}%")
                 print(f"{'='*70}\n")
+                _log_test_to_wandb(
+                    use_wandb=not args.no_wandb,
+                    approach=args.approach,
+                    model=args.model,
+                    task_or_suite=args.suite,
+                    episodes=50 * n_tasks,
+                    seed=args.seed,
+                    clip_actions=not args.no_clip,
+                    result_mt=(success_per_task, avg),
+                    task_list=task_list,
+                    device=device,
+                    tags=args.wandb_tag,
+                )
             else:
                 print("\nTest failed\n")
             sys.exit(0 if result is not None else 1)
@@ -560,6 +640,18 @@ Examples:
             print(f"\n{'='*70}")
             print(f"SUCCESS RATE: {result:.2f}%")
             print(f"{'='*70}\n")
+            _log_test_to_wandb(
+                use_wandb=not args.no_wandb,
+                approach=args.approach,
+                model=args.model,
+                task_or_suite=args.task,
+                episodes=args.episodes,
+                seed=args.seed,
+                clip_actions=not args.no_clip,
+                result_single=result,
+                device=device,
+                tags=args.wandb_tag,
+            )
         else:
             print(f"\nTest failed\n")
         sys.exit(0 if result is not None else 1)
@@ -579,6 +671,17 @@ Examples:
         )
         if result is not None:
             print(f"\nOverall success rate: {result:.2f}%")
+            _log_test_to_wandb(
+                use_wandb=not args.no_wandb,
+                approach=args.approach,
+                model=args.model,
+                task_or_suite=args.task,
+                episodes=50,
+                seed=args.seed,
+                clip_actions=not args.no_clip,
+                result_single=result,
+                tags=args.wandb_tag,
+            )
         sys.exit(0 if result is not None else 1)
     
     if args.visualize_series > 0:
@@ -599,6 +702,17 @@ Examples:
         )
         if result is not None:
             print(f"\nSUCCESS RATE (this run): {result:.2f}%")
+            _log_test_to_wandb(
+                use_wandb=not args.no_wandb,
+                approach=args.approach,
+                model=args.model,
+                task_or_suite=args.task,
+                episodes=args.visualize_parallel,
+                seed=args.seed,
+                clip_actions=not args.no_clip,
+                result_single=result,
+                tags=args.wandb_tag,
+            )
         sys.exit(0 if result is not None else 1)
     
     if args.visualize and args.episodes > 5 and args.visualize_series == 0:
@@ -633,5 +747,16 @@ Examples:
         print(f"\n{'='*70}")
         print(f"SUCCESS RATE: {result:.2f}%")
         print(f"{'='*70}\n")
+        _log_test_to_wandb(
+            use_wandb=not args.no_wandb,
+            approach=args.approach,
+            model=args.model,
+            task_or_suite=args.task,
+            episodes=args.episodes,
+            seed=args.seed,
+            clip_actions=not args.no_clip,
+            result_single=result,
+            tags=args.wandb_tag,
+        )
     else:
         print(f"\nTest failed\n")

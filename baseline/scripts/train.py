@@ -7,14 +7,42 @@ import argparse
 import os
 import json
 import shutil
+import sys
 import time
 from datetime import datetime
 
-# MT-10 task list (same as collect_one_per_goal.py)
-MT10_TASKS = [
-    'reach-v3', 'push-v3', 'pick-place-v3', 'door-open-v3', 'door-close-v3',
-    'drawer-open-v3', 'drawer-close-v3', 'button-press-v3', 'lever-pull-v3', 'window-open-v3',
-]
+# Shared task registry (baseline/tasks.py)
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+_BASELINE_DIR = os.path.dirname(_SCRIPT_DIR)
+_PROJECT_ROOT = os.path.dirname(_BASELINE_DIR)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+from baseline.tasks import get_tasks, num_tasks, policy_input_dim, obs_dim
+
+# Backward compatibility: MT10_TASKS for code that imports it (e.g. test.py)
+MT10_TASKS = get_tasks("mt10")
+
+
+def one_hot_task(task_id, num_tasks=10):
+    """Return one-hot vector of shape (num_tasks,) for the given task index."""
+    out = np.zeros(num_tasks, dtype=np.float32)
+    out[task_id] = 1.0
+    return out
+
+
+def load_train_config(config_path=None):
+    """Load training default config from baseline/train_config.yaml. Returns a dict."""
+    if config_path is None:
+        config_path = os.path.join(_BASELINE_DIR, "train_config.yaml")
+    if not os.path.isfile(config_path):
+        return {}
+    try:
+        import yaml
+        with open(config_path, "r") as f:
+            cfg = yaml.safe_load(f)
+        return cfg if isinstance(cfg, dict) else {}
+    except Exception:
+        return {}
 
 
 def get_device(device_prefer="auto"):
@@ -107,12 +135,14 @@ def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42,
     return success_rate, goal_success, failed_goals
 
 
-def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
-    """Run 50 episodes (1 per goal) for each of the 10 MT-10 tasks; input = concat(obs, one_hot(task_id)).
-    Returns success_rate_per_task (list of 10 floats), success_rate_avg (float)."""
+def eval_multitask(policy, suite, clip_actions=True, eval_seed=42, device=None):
+    """Run 50 episodes (1 per goal) for each task in suite; input = concat(obs, one_hot(task_id)).
+    Returns success_rate_per_task (list of floats), success_rate_avg (float)."""
     import metaworld
     if device is None:
         device = torch.device("cpu")
+    task_list = get_tasks(suite)
+    n_tasks = len(task_list)
     if eval_seed is not None:
         np.random.seed(eval_seed)
         torch.manual_seed(eval_seed)
@@ -128,7 +158,7 @@ def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
                 pass
     policy.eval()
     success_rate_per_task = []
-    for task_id, task_name in enumerate(MT10_TASKS):
+    for task_id, task_name in enumerate(task_list):
         mt1 = metaworld.MT1(task_name)
         env = mt1.train_classes[task_name]()
         goal_success = []
@@ -147,7 +177,7 @@ def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
             if isinstance(obs, tuple):
                 obs = obs[0] if len(obs) > 0 else obs
             obs = np.asarray(obs).flatten()
-            oh = one_hot_task(task_id)
+            oh = one_hot_task(task_id, num_tasks=n_tasks)
             done = False
             steps = 0
             while not done and steps < 500:
@@ -174,6 +204,11 @@ def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
     return success_rate_per_task, success_rate_avg
 
 
+def eval_mt10(policy, clip_actions=True, eval_seed=42, device=None):
+    """Backward-compat wrapper: eval_multitask(..., suite='mt10')."""
+    return eval_multitask(policy, "mt10", clip_actions=clip_actions, eval_seed=eval_seed, device=device)
+
+
 class ClonePolicy(nn.Module):
     def __init__(self, input_dim, output_dim, hidden_sizes=None):
         super(ClonePolicy, self).__init__()
@@ -196,39 +231,34 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
                 save_name='cloned_policy.pth', clip_actions=True, data_path=None,
                 end_weight=3.0, end_fraction=0.3, end_inner_weight=None, end_inner_fraction=0.0,
                 save_run=True, keep_runs=3, eval_seed=42, lr_decay_epoch=None, lr_decay_gamma=0.5,
-                end_upsample=False, mt10=False, device="auto"):
+                end_upsample=False, mt10=False, suite=None, device="auto",
+                use_wandb=True, wandb_tags=None, wandb_project=None, wandb_save_model=False):
     """Train a behavioral cloning policy.
     
     Args:
-        learning_rate: Adam learning rate
-        num_epochs: Number of training epochs
-        batch_size: Batch size for training
-        hidden_sizes: List of hidden layer sizes
-        save_name: Name of the model file to save
-        clip_actions: Whether to clip actions to [-1, 1]
-        data_path: Path to expert data .npz file
-        end_weight: Weight for (s,a) pairs in the last end_fraction of each trajectory (1.0 = no weighting).
-        end_fraction: Fraction of each trajectory (from the end) to up-weight (e.g. 0.3 = last 30%%).
-        end_inner_weight: If set (e.g. 5.0), the last end_inner_fraction of each traj gets this weight (inner tier).
-        end_inner_fraction: Fraction for inner tier (e.g. 0.05 = last 5%%, 0.1 = last 10%%). Used only if end_inner_weight is set.
-        save_run: If True, append run stats to baseline/training_runs.json and save model to models/runs/run_TS.pth.
-        keep_runs: Max run copies to keep in models/runs/ (oldest deleted). Default 50; use 0 to keep all.
-        eval_seed: Seed for post-training 50-goal eval (env.reset(seed=eval_seed+goal_idx)). Use same in test.py --seed for match.
-        lr_decay_epoch: If set (e.g. 250), multiply learning rate by lr_decay_gamma every this many epochs.
-        lr_decay_gamma: Factor for LR decay (default 0.5). Used only if lr_decay_epoch is set.
-        end_upsample: If True, duplicate last segments in the dataset and train with uniform MSE instead of weighted MSE.
-        mt10: If True, load MT-10 data (expect task_ids in npz), append one-hot to states (49-dim), and use eval_mt10 after training.
-        device: 'auto' (cuda -> xpu -> cpu), 'cuda', 'xpu', or 'cpu'.
+        ... (same as before)
+        suite: 'mt1', 'mt10', or 'mt50'. If None, inferred from mt10 (mt10=True -> suite='mt10').
+        use_wandb: If True, log to W&B (enabled by default; use --no-wandb to disable).
+        wandb_tags: Optional list of tags for the run.
+        wandb_project: W&B project name (default from config or 'cs229-metaworld').
+        wandb_save_model: If True, upload final checkpoint as W&B artifact.
     """
-    
+    if suite is None:
+        suite = "mt10" if mt10 else "mt1"
+    multitask = suite in ("mt10", "mt50")
+    n_tasks = num_tasks(suite)
+    in_dim = policy_input_dim(suite)
+
     device = get_device(device)
     if hidden_sizes is None:
         hidden_sizes = [256, 256, 128]
-    
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+
+    script_dir = _SCRIPT_DIR
     if data_path is None:
-        data_path = os.path.join(script_dir, '..', 'data',
-                                 'expert_data_mt10.npz' if mt10 else 'expert_data_reach-v3.npz')
+        if multitask:
+            data_path = os.path.join(script_dir, "..", "data", f"expert_data_{suite}.npz")
+        else:
+            data_path = os.path.join(script_dir, "..", "data", "expert_data_reach-v3.npz")
     
     model_dir = os.path.join(script_dir, '..', 'models')
     os.makedirs(model_dir, exist_ok=True)
@@ -237,23 +267,47 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
     print(f"Loading data from: {data_path}")
     print(f"Will save model to: {save_path}")
     print(f"Device: {device}")
-    if mt10:
-        print("MT-10 mode: 49-dim input (obs + one-hot task)")
-    
+    if multitask:
+        print(f"Multi-task mode ({suite}): {in_dim}-dim input (obs + one-hot task)")
+
+    # W&B: init (enabled by default; disable with use_wandb=False or WANDB_MODE=disabled)
+    run = None
+    if use_wandb:
+        try:
+            import wandb
+            lr_str = f"{learning_rate:.0e}".replace("-0", "-").replace("e-", "e-")
+            name_parts = [f"{suite}-lr{lr_str}-e{num_epochs}", f"end{int(end_weight)}"]
+            if end_inner_weight is not None and end_inner_fraction and end_inner_fraction > 0:
+                name_parts.append(f"inner{int(end_inner_weight)}x{int(end_inner_fraction*100)}")
+            run_name = "-".join(name_parts)
+            proj = wandb_project or "cs229-metaworld"
+            run = wandb.init(project=proj, name=run_name, tags=wandb_tags or [], reinit=True)
+            wandb.config.update({
+                "lr": learning_rate, "epochs": num_epochs, "batch_size": batch_size,
+                "hidden_sizes": hidden_sizes, "end_weight": end_weight, "end_fraction": end_fraction,
+                "end_inner_weight": end_inner_weight, "end_inner_fraction": end_inner_fraction,
+                "lr_decay_epoch": lr_decay_epoch, "lr_decay_gamma": lr_decay_gamma,
+                "clip_actions": clip_actions, "eval_seed": eval_seed, "suite": suite,
+                "end_upsample": end_upsample, "save_name": save_name,
+            }, allow_val_change=True)
+        except Exception as e:
+            print(f"W&B init skipped: {e}")
+            run = None
+
     data = np.load(data_path, allow_pickle=True)
     states_list = list(data['states'])
     actions_list = list(data['actions'])
     
-    if mt10:
+    if multitask:
         if 'task_ids' not in data:
-            raise ValueError("MT-10 mode requires 'task_ids' in the npz file.")
+            raise ValueError(f"Multi-task mode ({suite}) requires 'task_ids' in the npz file.")
         task_ids = np.asarray(data['task_ids'])
         if len(task_ids) != len(states_list):
             raise ValueError("task_ids length must match number of trajectories.")
-        # Append one-hot(task_id) to each state in each trajectory -> (T, 49)
+        # Append one-hot(task_id) to each state in each trajectory
         new_states_list = []
         for i, (traj_s, tid) in enumerate(zip(states_list, task_ids)):
-            oh = one_hot_task(int(tid))
+            oh = one_hot_task(int(tid), num_tasks=n_tasks)
             traj_s = np.asarray(traj_s)
             if traj_s.ndim == 1:
                 traj_s = traj_s.reshape(1, -1)
@@ -376,6 +430,14 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             total_loss += loss.item()
         
         final_loss = total_loss / len(dataloader)
+        if run is not None:
+            try:
+                step = epoch + 1
+                run.log({"train/loss": final_loss, "epoch": step}, step=step)
+                if lr_decay_epoch is not None:
+                    run.log({"train/lr": optimizer.param_groups[0]["lr"]}, step=step)
+            except Exception:
+                pass
         if (epoch + 1) % 50 == 0 or (epoch + 1) == num_epochs:
             print(f"Epoch {epoch+1}/{num_epochs} | Loss: {final_loss:.6f}")
 
@@ -393,8 +455,8 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         if end_upsample:
             name_parts.append("upsample")
         name_parts.append("clip" if clip_actions else "noclip")
-        if mt10:
-            name_parts.append("mt10")
+        if multitask:
+            name_parts.append(suite)
         run_fname = f"run_{ts}_{'_'.join(name_parts)}.pth"
         run_path = os.path.join(runs_dir, run_fname)
         torch.save(policy.state_dict(), run_path)
@@ -405,10 +467,11 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         print(f"\nModel saved to {save_path}")
 
     if save_run:
-        if mt10:
-            print("Running MT-10 eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
-            success_rate_per_task, success_rate_avg = eval_mt10(policy, clip_actions=clip_actions, eval_seed=eval_seed, device=device)
-            per_task_str = ", ".join(f"{name}: {r:.0f}%" for name, r in zip(MT10_TASKS, success_rate_per_task))
+        task_list = get_tasks(suite)
+        if multitask:
+            print(f"Running {suite} eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
+            success_rate_per_task, success_rate_avg = eval_multitask(policy, suite, clip_actions=clip_actions, eval_seed=eval_seed, device=device)
+            per_task_str = ", ".join(f"{name}: {r:.0f}%" for name, r in zip(task_list, success_rate_per_task))
             print(f"  Eval: avg={success_rate_avg:.1f}% | per-task: " + per_task_str)
         else:
             print("Running 50-goal eval for run record..." + (f" (seed={eval_seed})" if eval_seed is not None else ""))
@@ -434,16 +497,47 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             "final_loss": float(final_loss) if final_loss is not None else None,
             "num_samples": num_samples,
             "run_path": os.path.abspath(run_path),
-            "mt10": mt10,
+            "suite": suite,
+            "mt10": multitask and suite == "mt10",  # backward compat
             "train_duration_seconds": round(train_elapsed, 1),
         }
-        if mt10:
+        if multitask:
             run_record["success_rate_per_task"] = [round(r, 2) for r in success_rate_per_task]
             run_record["success_rate_avg"] = round(success_rate_avg, 2)
+            # W&B log eval metrics
+            if run is not None:
+                try:
+                    run.log({"eval/success_rate_avg": success_rate_avg, "train/final_loss": float(final_loss) if final_loss is not None else None,
+                            "train/duration_seconds": round(train_elapsed, 1), "train/num_samples": num_samples})
+                    for i, r in enumerate(success_rate_per_task):
+                        run.log({f"eval/success_rate_{task_list[i]}": r})
+                except Exception:
+                    pass
+                if wandb_save_model:
+                    try:
+                        wandb.save(run_path, base_path=os.path.dirname(run_path), policy="end")
+                    except Exception:
+                        pass
         else:
             run_record["success_rate"] = round(success_rate, 2)
             run_record["goal_success"] = goal_success
             run_record["failed_goals"] = failed_goals
+            if run is not None:
+                try:
+                    run.log({"eval/success_rate": success_rate, "train/final_loss": float(final_loss) if final_loss is not None else None,
+                            "train/duration_seconds": round(train_elapsed, 1), "train/num_samples": num_samples})
+                except Exception:
+                    pass
+                if wandb_save_model:
+                    try:
+                        wandb.save(run_path, base_path=os.path.dirname(run_path), policy="end")
+                    except Exception:
+                        pass
+        if run is not None:
+            try:
+                run.finish()
+            except Exception:
+                pass
         log_path = os.path.join(model_dir, "..", "training_runs.json")
         log_path = os.path.abspath(log_path)
         runs_list = []
@@ -481,7 +575,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
             fl_display = f"{fl * 1e6:.4f}" if fl is not None else "—"
             td = r.get("train_duration_seconds")
             time_str = f"{td}s" if td is not None else "—"
-            if r.get("mt10"):
+            if r.get("mt10") or r.get("suite", "").startswith("mt"):
                 sr_per = r.get("success_rate_per_task") or []
                 reach = f"{sr_per[0]}%" if len(sr_per) > 0 else "—"
                 avg = f"{r.get('success_rate_avg', '—')}%" if r.get("success_rate_avg") is not None else "—"
@@ -530,44 +624,56 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
                     pass
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Train a behavioral cloning policy')
-    parser.add_argument('--lr', type=float, default=0.0003, help='Learning rate')
-    parser.add_argument('--epochs', type=int, default=500, help='Number of epochs')
-    parser.add_argument('--batch', type=int, default=64, help='Batch size')
-    parser.add_argument('--hidden', type=int, nargs='+', default=[256, 256, 128], 
-                        help='Hidden layer sizes')
-    parser.add_argument('--name', type=str, default='cloned_policy.pth', 
-                        help='Model save name')
-    parser.add_argument('--no-clip', action='store_true', help='Do not clip actions (default: clip to [-1, 1])')
-    parser.add_argument('--data', type=str, help='Path to expert data')
-    parser.add_argument('--end-weight', type=float, default=3.0,
-                        help='Weight for last fraction of each trajectory (1.0 = no weighting)')
-    parser.add_argument('--end-fraction', type=float, default=0.3,
-                        help='Fraction of each trajectory to up-weight from the end (e.g. 0.3 = last 30%%)')
-    parser.add_argument('--end-inner-weight', type=float, default=None,
-                        help='Inner tier weight for last end-inner-fraction (e.g. 5.0); optional')
-    parser.add_argument('--end-inner-fraction', type=float, default=0.05,
-                        help='Fraction for inner tier (e.g. 0.05 = last 5%%, 0.1 = last 10%%)')
-    parser.add_argument('--no-save-run', action='store_true',
-                        help='Do not log run to training_runs.json or copy model to runs/')
-    parser.add_argument('--keep-runs', type=int, default=50,
-                        help='Max run copies to keep in models/runs/ (default: 50; 0 = keep all)')
-    parser.add_argument('--eval-seed', type=int, default=42,
-                        help='Seed for post-training 50-goal eval; use test.py --seed N with same N to match')
-    parser.add_argument('--lr-decay-epoch', type=int, default=None,
-                        help='Decay LR by --lr-decay-gamma every N epochs (e.g. 250); optional')
-    parser.add_argument('--lr-decay-gamma', type=float, default=0.5,
-                        help='LR decay factor (default 0.5); used only if --lr-decay-epoch is set')
-    parser.add_argument('--end-upsample', action='store_true',
-                        help='Use end upsampling (duplicate last segments) instead of weighted MSE')
-    parser.add_argument('--mt10', action='store_true',
-                        help='MT-10 mode: load data with task_ids, 49-dim input, eval on all 10 tasks')
-    parser.add_argument('--device', type=str, default='auto',
-                        choices=['auto', 'cuda', 'xpu', 'cpu'],
-                        help='Device: auto (prefer GPU), cuda (NVIDIA), xpu (Intel Arc), or cpu (default: auto)')
-    
+    cfg = load_train_config()
+    parser = argparse.ArgumentParser(description="Train a behavioral cloning policy")
+    parser.add_argument("--config", type=str, default=None, help="Path to train config YAML (default: baseline/train_config.yaml)")
+    parser.add_argument("--lr", type=float, default=cfg.get("lr", 0.0003), help="Learning rate")
+    parser.add_argument("--epochs", type=int, default=cfg.get("epochs", 500), help="Number of epochs")
+    parser.add_argument("--batch", type=int, default=cfg.get("batch_size", 64), help="Batch size")
+    parser.add_argument("--hidden", type=int, nargs="+", default=cfg.get("hidden_sizes", [256, 256, 128]),
+                        help="Hidden layer sizes")
+    parser.add_argument("--name", type=str, default=cfg.get("save_name", "cloned_policy.pth"),
+                        help="Model save name")
+    parser.add_argument("--no-clip", action="store_true", help="Do not clip actions (default: clip to [-1, 1])")
+    parser.add_argument("--data", type=str, default=None, help="Path to expert data")
+    parser.add_argument("--end-weight", type=float, default=cfg.get("end_weight", 3.0),
+                        help="Weight for last fraction of each trajectory (1.0 = no weighting)")
+    parser.add_argument("--end-fraction", type=float, default=cfg.get("end_fraction", 0.3),
+                        help="Fraction of each trajectory to up-weight from the end (e.g. 0.3 = last 30%%)")
+    parser.add_argument("--end-inner-weight", type=float, default=cfg.get("end_inner_weight"),
+                        help="Inner tier weight for last end-inner-fraction (e.g. 5.0); optional")
+    parser.add_argument("--end-inner-fraction", type=float, default=cfg.get("end_inner_fraction", 0.05),
+                        help="Fraction for inner tier (e.g. 0.05 = last 5%%, 0.1 = last 10%%)")
+    parser.add_argument("--no-save-run", action="store_true",
+                        help="Do not log run to training_runs.json or copy model to runs/")
+    parser.add_argument("--keep-runs", type=int, default=cfg.get("keep_runs", 50),
+                        help="Max run copies to keep in models/runs/ (default: 50; 0 = keep all)")
+    parser.add_argument("--eval-seed", type=int, default=cfg.get("eval_seed", 42),
+                        help="Seed for post-training 50-goal eval; use test.py --seed N with same N to match")
+    parser.add_argument("--lr-decay-epoch", type=int, default=cfg.get("lr_decay_epoch"),
+                        help="Decay LR by --lr-decay-gamma every N epochs (e.g. 250); optional")
+    parser.add_argument("--lr-decay-gamma", type=float, default=cfg.get("lr_decay_gamma", 0.5),
+                        help="LR decay factor (default 0.5); used only if --lr-decay-epoch is set")
+    parser.add_argument("--end-upsample", action="store_true", default=cfg.get("end_upsample", False),
+                        help="Use end upsampling (duplicate last segments) instead of weighted MSE")
+    parser.add_argument("--mt10", action="store_true", help="MT-10 mode (same as --suite mt10)")
+    parser.add_argument("--suite", type=str, default=cfg.get("suite", "mt1"), choices=["mt1", "mt10", "mt50"],
+                        help="Suite: mt1 (single task), mt10, or mt50 (default from config)")
+    parser.add_argument("--device", type=str, default=cfg.get("device", "auto"),
+                        choices=["auto", "cuda", "xpu", "cpu"],
+                        help="Device: auto (prefer GPU), cuda (NVIDIA), xpu (Intel Arc), or cpu (default: auto)")
+    parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging (enabled by default)")
+    parser.add_argument("--wandb-tag", type=str, action="append", default=None,
+                        help="W&B run tag (e.g. name:alice); can be repeated")
+    parser.add_argument("--wandb-save-model", action="store_true", help="Upload final checkpoint to W&B as artifact")
     args = parser.parse_args()
-    
+
+    if args.config is not None:
+        cfg = load_train_config(args.config)
+        # Re-apply CLI overrides are already in args
+    use_wandb = not args.no_wandb and cfg.get("use_wandb", True)
+    wandb_project = cfg.get("wandb_project") or "cs229-metaworld"
+
     train_model(
         learning_rate=args.lr,
         num_epochs=args.epochs,
@@ -587,5 +693,10 @@ if __name__ == "__main__":
         lr_decay_gamma=args.lr_decay_gamma,
         end_upsample=args.end_upsample,
         mt10=args.mt10,
+        suite=args.suite,
         device=args.device,
+        use_wandb=use_wandb,
+        wandb_tags=args.wandb_tag,
+        wandb_project=wandb_project,
+        wandb_save_model=args.wandb_save_model,
     )

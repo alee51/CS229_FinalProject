@@ -1,0 +1,41 @@
+# Single source of truth for training hyperparameters.
+# Override via CLI (train.py) or W&B sweep (run_sweep.py).
+
+# Optimization
+lr: 0.0003
+epochs: 500
+batch_size: 64
+hidden_sizes: [256, 256, 128]
+
+# Model save
+save_name: cloned_policy.pth
+
+# Loss / behavior
+clip_actions: true
+end_weight: 3.0
+end_fraction: 0.3
+end_inner_weight: null  # set to float (e.g. 5.0) for inner tier
+end_inner_fraction: 0.05
+end_upsample: false
+
+# Run logging (local)
+save_run: true
+keep_runs: 50
+
+# Eval
+eval_seed: 42
+
+# LR schedule
+lr_decay_epoch: 250
+lr_decay_gamma: 0.5
+
+# Multi-task: mt1 (single task), mt10, or mt50
+suite: mt1
+
+# Device: auto, cuda, xpu, cpu
+device: auto
+
+# W&B (only used when baseline/scripts/train.py is run with use_wandb=True)
+use_wandb: true
+wandb_project: cs229-metaworld
+wandb_save_model: false
