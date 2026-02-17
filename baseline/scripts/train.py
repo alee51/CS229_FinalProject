@@ -316,7 +316,7 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
 
         def row(r):
             run_path = r.get("run_path", "")
-            run_file = os.path.basename(run_path) if run_path else "—"
+            run_file = r.get("save_name") or (os.path.basename(run_path) if run_path else "—")
             ep = r.get("epochs", "")
             ew = r.get("end_weight", "")
             ei_str = (f"{r.get('end_inner_weight')}@{r.get('end_inner_fraction', 0)*100:.0f}%" 

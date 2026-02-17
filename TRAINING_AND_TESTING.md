@@ -26,6 +26,19 @@ If you ever had only one goal (e.g. only `train_tasks[0]`) in your expert data, 
 
 ---
 
+## What is actually in the expert data file?
+
+If you use **`collect_one_per_goal.py`** (the minimal dataset):
+
+- **50 goals** → 50 expert trajectories (one per goal).
+- The `.npz` has two arrays: `states` and `actions`, each of length 50. Each element is a **trajectory**: an array of (state or action) vectors, one per timestep.
+- **Total (s,a) pairs** = sum of trajectory lengths. Example: if you have **2474 samples**, that’s 2474 ÷ 50 ≈ **49 steps per goal on average**. So yes: roughly 49 “frames” of the expert reaching toward the ball per goal.
+- Trajectory length **varies per goal**: the expert runs until success (or 500 steps). So one goal might have 45 steps, another 52; the total is just the sum. Training concatenates all trajectories into one flat list of (s,a) pairs and does not use goal identity—the state already encodes the goal.
+
+So: **50 goals, ~49 frames per goal on average (2474 total samples)** is the right picture.
+
+---
+
 ## Expert data collection: do we need multiple episodes per goal?
 
 **No.** Same logic as testing: same goal + deterministic reset → same initial state; expert policy is deterministic → same actions every time. So the expert solves each goal in **exactly the same way** every time. Multiple episodes per goal just record the **same trajectory** (same sequence of (s,a) pairs) over and over—they don't add new diversity.
