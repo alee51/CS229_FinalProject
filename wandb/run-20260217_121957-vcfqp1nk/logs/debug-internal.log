@@ -612,3 +612,17 @@
 {"time":"2026-02-17T15:20:59.0319975-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
 {"time":"2026-02-17T15:21:14.0358137-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
 {"time":"2026-02-17T15:21:29.0322008-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:21:44.0318663-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:21:59.0325519-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:22:14.0319557-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:22:29.0617832-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:22:44.0319814-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:22:59.031883-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:23:14.0323121-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:23:29.0318931-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:23:44.0320408-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:23:59.0345669-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:24:14.0322525-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:24:29.0318822-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:24:44.0321082-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:24:59.0320986-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
