@@ -16,6 +16,8 @@ Training runs are logged to **Weights & Biases** by default so the team can comp
 
 **Security:** Do not commit API keys to the repo. Use the env var or `wandb login` (which stores the key locally only). The file with your real key (e.g. `.env`) is listed in `.gitignore` so it is never committed.
 
+**Job types and tags:** Training runs use **job_type `train`** and evaluation runs use **job_type `eval`**, so you can filter by type in the W&B UI. Runs are automatically tagged by **approach** (baseline, vae, tce) and **suite** (mt1, mt10, mt50) so you can quickly filter (e.g. all baseline runs or all mt10 runs). All sweep hyperparameters (epochs, lr, hidden_sizes, lr_decay_*, etc.) are in **config** for table columns and sweep comparison, not in tags.
+
 ## Single runs (default: W&B on)
 
 From project root:
@@ -53,6 +55,8 @@ python train.py --approach baseline --wandb-save-model
 
 Evaluation runs from **test.py** are logged to the same project **`cs229-metaworld`** with **job type `eval`**, so you can track results for models you have already trained. In the W&B UI, filter by job type “eval” to see only test runs, or compare them with training runs.
 
+**Auto eval at end of training:** The post-training 50-goal eval is logged as a **separate eval run** (not on the training run), with **config.training_run_id** set to the training run's id so you can link this eval to that training run. It also sets **config.source = "auto"** so you can filter auto evals from test.py evals. All eval runs (auto and test.py) log **config.model** (the .pth filename) so you can group evals by policy. Policies trained before W&B have no training run; only their test.py eval runs appear.
+
 From project root:
 
 ```bash
@@ -73,6 +77,16 @@ python test.py --approach baseline --model my.pth --no-wandb
 ```bash
 python test.py --approach baseline --model my.pth --wandb-tag model:mt10-500ep --wandb-tag name:alice
 ```
+
+## Parallel plot 0–100% scaling
+
+For the MT10 parallel coordinates plot, W&B auto-scales each axis to the data range. To force all success-rate axes to 0–100%, run once from project root:
+
+```bash
+python log_wandb_scale_anchors.py
+```
+
+This creates two dummy runs (`scale-anchor-0` and `scale-anchor-100`) with all MT10 success-rate metrics at 0 and 100. Include these runs in the parallel coordinates panel's run set so all axes scale 0–100%. Filter by tag `scale-anchor` or `mt10` to hide these runs in other panels or to find them for the parallel plot. You only need to run it once per project unless you delete the anchor runs.
 
 ## Config file (single source of truth)
 
@@ -107,8 +121,10 @@ Sweep defaults for non-swept parameters come from `baseline/train_config.yaml`; 
 | What              | Command / location |
 |-------------------|--------------------|
 | Project name      | `cs229-metaworld` (set in `baseline/train_config.yaml`) |
+| Job type          | Train: `job_type=train`; Eval: `job_type=eval` |
+| Auto tags         | approach (baseline/vae/tce), suite (mt1/mt10/mt50); add more with `--wandb-tag` |
+| Sweep hyperparams | In **config** (epochs, lr, hidden_sizes, etc.) for table columns and sweep comparison |
 | Disable W&B       | `--no-wandb` or `WANDB_MODE=disabled` (train and test) |
-| Tags              | `--wandb-tag name:alice` (repeatable; train and test) |
 | Test runs (eval)  | `python test.py --approach baseline --model <name>` (job_type=eval) |
 | Config defaults   | `baseline/train_config.yaml` |
 | Sweep definition  | `baseline/sweep.yaml` |

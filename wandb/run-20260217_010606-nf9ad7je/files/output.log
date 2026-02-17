@@ -1,0 +1,15 @@
+Training on 35444 samples
+
+Training: LR=0.0003, Epochs=100, Batch=64
+LR decay: every 250 epochs × 0.5
+Hidden sizes: [64, 64], Clip actions: True
+
+Epoch 50/100 | Loss: 0.037640
+Epoch 100/100 | Loss: 0.028616
+
+Training completed in 92.7s (1.5 min)
+
+Model saved to C:\Users\nancy\Desktop\CS229_FinalProject\baseline\scripts\..\models\runs\run_20260217_010743_end1_clip_mt10.pth (latest copied to C:\Users\nancy\Desktop\CS229_FinalProject\baseline\scripts\..\models\cloned_policy.pth)
+Running mt10 eval for run record... (seed=42)
+  Eval: avg=52.0% | per-task: reach-v3: 2%, push-v3: 8%, pick-place-v3: 4%, door-open-v3: 50%, door-close-v3: 56%, drawer-open-v3: 100%, drawer-close-v3: 100%, button-press-v3: 100%, lever-pull-v3: 0%, window-open-v3: 100%
+[34m[1mwandb[0m: Finishing previous runs because reinit is set to True.

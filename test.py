@@ -77,10 +77,14 @@ def _log_test_to_wandb(use_wandb, approach, model, task_or_suite, episodes, seed
     try:
         import wandb
         model_stem = os.path.splitext(os.path.basename(model))[0]
-        run_name = f"eval-{task_or_suite}-{model_stem}-{episodes}ep"
-        run = wandb.init(project="cs229-metaworld", job_type="eval", name=run_name, tags=tags or [], reinit=True)
+        # suite: mt1 for single-task, mt10/mt50 for multi-task
+        suite = "mt1" if result_single is not None else task_or_suite
+        run_name = f"eval-mt1-{task_or_suite}-{model_stem}-{episodes}ep" if result_single is not None else f"eval-{task_or_suite}-{model_stem}-{episodes}ep"
+        wandb_tags_list = [approach, suite] + list(tags or [])
+        run = wandb.init(project="cs229-metaworld", job_type="eval", name=run_name, tags=wandb_tags_list, reinit=True)
         wandb.config.update({
             "approach": approach,
+            "suite": suite,
             "model": os.path.basename(model),
             "task_or_suite": task_or_suite,
             "episodes": episodes,

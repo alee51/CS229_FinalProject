@@ -1,0 +1,7 @@
+"Name","hidden_sizes","epochs","end_inner_fraction","eval/success_rate_avg","eval/success_rate_button-press-v3","eval/success_rate_door-close-v3","eval/success_rate_door-open-v3","eval/success_rate_drawer-close-v3","eval/success_rate_drawer-open-v3","eval/success_rate_lever-pull-v3","eval/success_rate_pick-place-v3","eval/success_rate_push-v3","eval/success_rate_reach-v3","eval/success_rate_window-open-v3","train/final_loss","train/duration_seconds"
+"eval-mt10-run_20260217_000941_end1_clip_mt10-500ep-lr3e-4-e100-end1","[64,64]","100","0.05","57","98","100","84","100","60","0","6","16","6","100","",""
+"eval-mt10-run_20260217_013335_end1_clip_mt10-500ep-lr3e-4-e300-end1","[128,128]","300","0.005","59","84","57.99999999999999","100","96","100","0","12","22","18","100","",""
+"eval-mt10-mt10_using_mt1_baseline-1000_epochs-500ep","","","","61.6","86","82","76","100","100","0","10","44","18","100","",""
+"eval-mt10-cloned_policy-500ep","","","","58.8","80","100","92","100","100","0","10","6","0","100","",""
+"dummy all 0","","","","0","0","0","0","0","0","0","0","0","0","0","",""
+"dummy all 100","","","","100","100","100","100","100","100","100","100","100","100","100","",""

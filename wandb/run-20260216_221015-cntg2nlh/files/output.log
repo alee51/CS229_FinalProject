@@ -1,0 +1,33 @@
+Training on 2474 samples
+
+Training: LR=0.0003, Epochs=1000, Batch=64
+LR decay: every 250 epochs × 0.5
+Hidden sizes: [32, 32], Clip actions: True
+
+Epoch 50/1000 | Loss: 0.010419
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\train.py", line 155, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\train.py", line 129, in main
+    train_model(
+    ~~~~~~~~~~~^
+        learning_rate=args.lr,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<20 lines>...
+        wandb_save_model=args.wandb_save_model,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\baseline\scripts\train.py", line 429, in train_model
+    optimizer.step()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\torch\optim\optimizer.py", line 526, in wrapper
+    out = func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\torch\optim\optimizer.py", line 79, in _use_grad
+    torch.set_grad_enabled(self.defaults["differentiable"])
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\torch\autograd\grad_mode.py", line 185, in __init__
+    self.prev = torch.is_grad_enabled()
+                ~~~~~~~~~~~~~~~~~~~~~^^
+KeyboardInterrupt

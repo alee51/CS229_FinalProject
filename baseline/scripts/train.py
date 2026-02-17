@@ -231,20 +231,20 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
                 save_name='cloned_policy.pth', clip_actions=True, data_path=None,
                 end_weight=3.0, end_fraction=0.3, end_inner_weight=None, end_inner_fraction=0.0,
                 save_run=True, keep_runs=3, eval_seed=42, lr_decay_epoch=None, lr_decay_gamma=0.5,
-                end_upsample=False, mt10=False, suite=None, device="auto",
+                end_upsample=False, suite=None, device="auto",
                 use_wandb=True, wandb_tags=None, wandb_project=None, wandb_save_model=False):
     """Train a behavioral cloning policy.
     
     Args:
         ... (same as before)
-        suite: 'mt1', 'mt10', or 'mt50'. If None, inferred from mt10 (mt10=True -> suite='mt10').
+        suite: 'mt1', 'mt10', or 'mt50'. If None, defaults to 'mt1'.
         use_wandb: If True, log to W&B (enabled by default; use --no-wandb to disable).
         wandb_tags: Optional list of tags for the run.
         wandb_project: W&B project name (default from config or 'cs229-metaworld').
         wandb_save_model: If True, upload final checkpoint as W&B artifact.
     """
     if suite is None:
-        suite = "mt10" if mt10 else "mt1"
+        suite = "mt1"
     multitask = suite in ("mt10", "mt50")
     n_tasks = num_tasks(suite)
     in_dim = policy_input_dim(suite)
@@ -281,8 +281,11 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
                 name_parts.append(f"inner{int(end_inner_weight)}x{int(end_inner_fraction*100)}")
             run_name = "-".join(name_parts)
             proj = wandb_project or "cs229-metaworld"
-            run = wandb.init(project=proj, name=run_name, tags=wandb_tags or [], reinit=True)
+            approach = "baseline"
+            wandb_tags_list = [approach, suite] + list(wandb_tags or [])
+            run = wandb.init(project=proj, name=run_name, job_type="train", tags=wandb_tags_list, reinit=True)
             wandb.config.update({
+                "approach": approach,
                 "lr": learning_rate, "epochs": num_epochs, "batch_size": batch_size,
                 "hidden_sizes": hidden_sizes, "end_weight": end_weight, "end_fraction": end_fraction,
                 "end_inner_weight": end_inner_weight, "end_inner_fraction": end_inner_fraction,
@@ -504,35 +507,81 @@ def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes
         if multitask:
             run_record["success_rate_per_task"] = [round(r, 2) for r in success_rate_per_task]
             run_record["success_rate_avg"] = round(success_rate_avg, 2)
-            # W&B log eval metrics
-            if run is not None:
-                try:
-                    run.log({"eval/success_rate_avg": success_rate_avg, "train/final_loss": float(final_loss) if final_loss is not None else None,
-                            "train/duration_seconds": round(train_elapsed, 1), "train/num_samples": num_samples})
-                    for i, r in enumerate(success_rate_per_task):
-                        run.log({f"eval/success_rate_{task_list[i]}": r})
-                except Exception:
-                    pass
-                if wandb_save_model:
-                    try:
-                        wandb.save(run_path, base_path=os.path.dirname(run_path), policy="end")
-                    except Exception:
-                        pass
         else:
             run_record["success_rate"] = round(success_rate, 2)
             run_record["goal_success"] = goal_success
             run_record["failed_goals"] = failed_goals
-            if run is not None:
-                try:
-                    run.log({"eval/success_rate": success_rate, "train/final_loss": float(final_loss) if final_loss is not None else None,
-                            "train/duration_seconds": round(train_elapsed, 1), "train/num_samples": num_samples})
-                except Exception:
-                    pass
+
+        # W&B: training run gets only train summary and optional model artifact; auto eval is a separate eval run
+        training_run_id = None
+        if run is not None:
+            try:
+                run.log({
+                    "train/final_loss": float(final_loss) if final_loss is not None else None,
+                    "train/duration_seconds": round(train_elapsed, 1),
+                    "train/num_samples": num_samples,
+                })
                 if wandb_save_model:
-                    try:
-                        wandb.save(run_path, base_path=os.path.dirname(run_path), policy="end")
-                    except Exception:
-                        pass
+                    wandb.save(run_path, base_path=os.path.dirname(run_path), policy="end")
+                training_run_id = run.id
+            except Exception:
+                pass
+
+        # W&B: create a separate eval run for the auto eval (linked to training run via config.training_run_id)
+        if run is not None and use_wandb and training_run_id is not None:
+            try:
+                import wandb
+                proj = wandb_project or "cs229-metaworld"
+                approach = "baseline"
+                # Use actual saved run file (run_path), not save_name, for model identity
+                model_stem = os.path.splitext(os.path.basename(run_path))[0]
+                lr_str = f"{learning_rate:.0e}".replace("-0", "-").replace("e-", "e-")
+                param_suffix = f"-lr{lr_str}-e{num_epochs}-end{int(end_weight)}"
+                if multitask:
+                    eval_run_name = f"eval-{suite}-{model_stem}-{50 * n_tasks}ep{param_suffix}"
+                    task_or_suite = suite
+                    episodes = 50 * n_tasks
+                else:
+                    task_name = task_list[0]  # mt1 -> reach-v3
+                    eval_run_name = f"eval-mt1-{task_name}-{model_stem}-50ep{param_suffix}"
+                    task_or_suite = task_name
+                    episodes = 50
+                eval_tags = [approach, suite]
+                wandb.init(project=proj, job_type="eval", name=eval_run_name, tags=eval_tags, reinit=True)
+                wandb.config.update({
+                    "approach": approach,
+                    "suite": suite,
+                    "model": os.path.basename(run_path),
+                    "task_or_suite": task_or_suite,
+                    "episodes": episodes,
+                    "seed": eval_seed,
+                    "clip_actions": clip_actions,
+                    "training_run_id": training_run_id,
+                    "source": "auto",
+                    # Training hyperparameters (so Runs table and grouping show them)
+                    "lr": learning_rate,
+                    "epochs": num_epochs,
+                    "batch_size": batch_size,
+                    "hidden_sizes": hidden_sizes,
+                    "end_weight": end_weight,
+                    "end_fraction": end_fraction,
+                    "end_inner_weight": end_inner_weight,
+                    "end_inner_fraction": end_inner_fraction,
+                    "lr_decay_epoch": lr_decay_epoch,
+                    "lr_decay_gamma": lr_decay_gamma,
+                    "end_upsample": end_upsample,
+                    "save_name": save_name,
+                }, allow_val_change=True)
+                if multitask:
+                    wandb.log({"eval/success_rate_avg": success_rate_avg})
+                    for i, r in enumerate(success_rate_per_task):
+                        wandb.log({f"eval/success_rate_{task_list[i]}": r})
+                else:
+                    wandb.log({"eval/success_rate": success_rate})
+                wandb.finish()
+            except Exception as e:
+                print(f"W&B auto-eval run skipped: {e}")
+
         if run is not None:
             try:
                 run.finish()
@@ -656,7 +705,6 @@ if __name__ == "__main__":
                         help="LR decay factor (default 0.5); used only if --lr-decay-epoch is set")
     parser.add_argument("--end-upsample", action="store_true", default=cfg.get("end_upsample", False),
                         help="Use end upsampling (duplicate last segments) instead of weighted MSE")
-    parser.add_argument("--mt10", action="store_true", help="MT-10 mode (same as --suite mt10)")
     parser.add_argument("--suite", type=str, default=cfg.get("suite", "mt1"), choices=["mt1", "mt10", "mt50"],
                         help="Suite: mt1 (single task), mt10, or mt50 (default from config)")
     parser.add_argument("--device", type=str, default=cfg.get("device", "auto"),
@@ -692,7 +740,6 @@ if __name__ == "__main__":
         lr_decay_epoch=args.lr_decay_epoch,
         lr_decay_gamma=args.lr_decay_gamma,
         end_upsample=args.end_upsample,
-        mt10=args.mt10,
         suite=args.suite,
         device=args.device,
         use_wandb=use_wandb,

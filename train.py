@@ -71,7 +71,6 @@ Examples:
     parser.add_argument("--lr-decay-gamma", type=float, default=cfg.get("lr_decay_gamma", 0.5),
                         help="LR decay factor (default 0.5)")
     parser.add_argument("--no-lr-decay", action="store_true", help="Disable LR decay")
-    parser.add_argument("--mt10", action="store_true", help="MT-10 mode (same as --suite mt10)")
     parser.add_argument("--suite", type=str, default=cfg.get("suite", "mt1"), choices=["mt1", "mt10", "mt50"],
                         help="Suite: mt1, mt10, or mt50 (default from config)")
     parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging (enabled by default)")
@@ -143,7 +142,6 @@ Examples:
         lr_decay_epoch=args.lr_decay_epoch,
         lr_decay_gamma=args.lr_decay_gamma,
         end_upsample=args.end_upsample,
-        mt10=args.mt10,
         suite=args.suite,
         use_wandb=use_wandb,
         wandb_tags=args.wandb_tag,

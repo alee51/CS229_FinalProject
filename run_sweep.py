@@ -63,7 +63,6 @@ def main():
         lr_decay_epoch=lr_decay_epoch,
         lr_decay_gamma=lr_decay_gamma,
         end_upsample=False,
-        mt10=(suite == "mt10"),
         suite=suite,
         device="auto",
         use_wandb=True,

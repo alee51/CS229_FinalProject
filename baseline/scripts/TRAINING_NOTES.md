@@ -1,9 +1,7 @@
 TRAINING_NOTES.md
 
 ### Current Status
-Trying to get a baseline on MT-10. Currently, successfully collected 50 expert demonstrations for each of the 10 tasks in MT-10. 
-
-Training the same model on mt-10 gives 100% on drawer open, drawer close, window open. 0% on lever pull. 22% on reach. kind of confusing... 
+Trying to improve baseline for mt-10 slightly
 
 ###### How to further improve
 - Add weights & biases integration
@@ -70,5 +68,22 @@ python train.py --name no_end_baseline_64x64.pth --end-weight 1.0 --epochs 2000 
   --keep-runs 50 --eval-seed 42 --lr-decay-gamma 0.5
 ```
 (Omitting `--no-clip`, `--data`, `--end-inner-weight`, `--no-save-run`, `--lr-decay-epoch`, `--end-upsample` leaves them at the defaults above.)
+</details>
+
+<details>
+<summary>Baseline for mt-10 </summary>
+Trying to get a baseline on MT-10. Currently, successfully collected 50 expert demonstrations for each of the 10 tasks in MT-10. 
+
+Training the same model on mt-10 gives 100% on drawer open, drawer close, window open. 0% on lever pull. 22% on reach. kind of confusing... 
+- reach-v3: 22.0%
+- push-v3: 28.0%
+- pick-place-v3: 18.0%
+- door-open-v3: 72.0%
+- door-close-v3: 66.0%
+- drawer-open-v3: 100.0%
+- drawer-close-v3: 100.0%
+- button-press-v3: 92.0%
+- lever-pull-v3: 0.0%
+- window-open-v3: 100.0%
 </details>
 
