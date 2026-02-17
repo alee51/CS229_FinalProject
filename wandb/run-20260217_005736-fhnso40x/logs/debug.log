@@ -1,0 +1,22 @@
+2026-02-17 00:57:36,721 INFO    MainThread:28520 [wandb_init.py:setup_run_log_directory():717] Logging user logs to C:\Users\nancy\Desktop\CS229_FinalProject\wandb\run-20260217_005736-fhnso40x\logs\debug.log
+2026-02-17 00:57:36,730 INFO    MainThread:28520 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to C:\Users\nancy\Desktop\CS229_FinalProject\wandb\run-20260217_005736-fhnso40x\logs\debug-internal.log
+2026-02-17 00:57:36,737 INFO    MainThread:28520 [wandb_init.py:init():844] calling init triggers
+2026-02-17 00:57:36,737 INFO    MainThread:28520 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2026-02-17 00:57:37,444 INFO    MainThread:28520 [wandb_init.py:init():892] starting backend
+2026-02-17 00:57:37,444 INFO    MainThread:28520 [wandb_init.py:init():895] sending inform_init request
+2026-02-17 00:57:37,451 INFO    MainThread:28520 [wandb_init.py:init():903] backend started and connected
+2026-02-17 00:57:37,452 INFO    MainThread:28520 [wandb_init.py:init():973] updated telemetry
+2026-02-17 00:57:37,513 INFO    MainThread:28520 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-02-17 00:57:38,150 INFO    MainThread:28520 [wandb_init.py:init():1042] starting run threads in backend
+2026-02-17 00:57:38,259 INFO    MainThread:28520 [wandb_run.py:_console_start():2524] atexit reg
+2026-02-17 00:57:38,260 INFO    MainThread:28520 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-02-17 00:57:38,260 INFO    MainThread:28520 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-02-17 00:57:38,260 INFO    MainThread:28520 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-02-17 00:57:38,261 INFO    MainThread:28520 [wandb_init.py:init():1082] run started, returning control to user process
+2026-02-17 00:57:38,262 INFO    MainThread:28520 [wandb_run.py:_config_callback():1403] config_cb None None {'approach': 'baseline', 'suite': 'mt10', 'model': 'run_20260217_005419_end1_clip_mt10.pth', 'task_or_suite': 'mt10', 'episodes': 500, 'seed': 42, 'clip_actions': True, 'training_run_id': '119imxe9', 'source': 'auto', 'lr': 0.0003, 'epochs': 300, 'batch_size': 64, 'hidden_sizes': [64, 64], 'end_weight': 1.0, 'end_fraction': 0.3, 'end_inner_weight': None, 'end_inner_fraction': 0.01, 'lr_decay_epoch': 250, 'lr_decay_gamma': 0.5, 'end_upsample': False, 'save_name': 'cloned_policy.pth'}
+2026-02-17 00:57:38,270 INFO    MainThread:28520 [wandb_run.py:_finish():2291] finishing run nancy-bao-stanford-university/cs229-metaworld/fhnso40x
+2026-02-17 00:57:38,270 INFO    MainThread:28520 [wandb_run.py:_atexit_cleanup():2490] got exitcode: 0
+2026-02-17 00:57:38,273 INFO    MainThread:28520 [wandb_run.py:_restore():2472] restore
+2026-02-17 00:57:38,273 INFO    MainThread:28520 [wandb_run.py:_restore():2478] restore done
+2026-02-17 00:57:39,154 INFO    MainThread:28520 [wandb_run.py:_footer_sync_info():3868] logging synced files

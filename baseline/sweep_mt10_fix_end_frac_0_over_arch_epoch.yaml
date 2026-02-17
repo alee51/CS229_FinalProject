@@ -1,0 +1,21 @@
+# W&B sweep: MT-10 full grid for end_inner over arch and epochs (16 runs).
+# Create: wandb sweep baseline/sweep_mt10_end_inner_full.yaml
+# Run:    wandb agent <entity>/CS229_FinalProject/<sweep_id>
+
+program: run_sweep.py
+method: grid
+metric:
+  name: eval/success_rate_avg
+  goal: maximize
+
+parameters:
+  suite:
+    value: mt10
+  end_weight:
+    value: 1.0
+  end_inner_fraction:
+    values: [0, 0.005, 0.01, 0.02]
+  hidden_dim:
+    values: [128, 256]
+  epochs:
+    values: [500, 1000]

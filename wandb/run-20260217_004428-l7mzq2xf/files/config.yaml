@@ -1,0 +1,93 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            vyvtr846dalu3wc3xy82ws5n7hrx5wp5:
+                args:
+                    - --suite
+                    - mt10
+                    - --end-weight
+                    - "1.0"
+                    - --epochs
+                    - "100"
+                    - --end-inner-fraction
+                    - "0.01"
+                    - --hidden
+                    - "128"
+                    - "128"
+                codePath: train.py
+                codePathLocal: train.py
+                cpu_count: 8
+                cpu_count_logical: 8
+                disk:
+                    /:
+                        total: "1021821579264"
+                        used: "171978493952"
+                email: nancy.x.bao@gmail.com
+                executable: C:\Users\nancy\Desktop\CS229_FinalProject\venv\Scripts\python.exe
+                git:
+                    commit: 9a86a955b96a7a7cc868819fdd186a693b613bf6
+                    remote: git@github.com:alee51/CS229_FinalProject.git
+                host: NB_Thinkpad_X9
+                memory:
+                    total: "33847832576"
+                os: Windows-11-10.0.26200-SP0
+                program: C:\Users\nancy\Desktop\CS229_FinalProject\train.py
+                python: CPython 3.13.11
+                root: C:\Users\nancy\Desktop\CS229_FinalProject
+                startedAt: "2026-02-17T08:44:28.560273Z"
+                writerId: vyvtr846dalu3wc3xy82ws5n7hrx5wp5
+        m: []
+        python_version: 3.13.11
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 2
+                - 13
+                - 15
+                - 61
+            "4": 3.13.11
+            "5": 0.25.0
+            "8":
+                - 3
+            "10":
+                - 20
+            "12": 0.25.0
+            "13": windows-amd64
+approach:
+    value: baseline
+batch_size:
+    value: 64
+clip_actions:
+    value: true
+end_fraction:
+    value: 0.3
+end_inner_fraction:
+    value: 0.01
+end_inner_weight:
+    value: null
+end_upsample:
+    value: false
+end_weight:
+    value: 1
+epochs:
+    value: 100
+eval_seed:
+    value: 42
+hidden_sizes:
+    value:
+        - 128
+        - 128
+lr:
+    value: 0.0003
+lr_decay_epoch:
+    value: 250
+lr_decay_gamma:
+    value: 0.5
+save_name:
+    value: cloned_policy.pth
+suite:
+    value: mt10

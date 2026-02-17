@@ -1,0 +1,885 @@
+2026-02-17 03:16:32 INFO Running runs: []
+2026-02-17 03:16:33 INFO Agent received command: run
+2026-02-17 03:16:33 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:33 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:37 INFO Running runs: []
+2026-02-17 03:16:38 INFO Agent received command: run
+2026-02-17 03:16:38 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:38 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:38 INFO Running runs: ['w59fix08']
+2026-02-17 03:16:38 INFO Cleaning up finished run: w59fix08
+2026-02-17 03:16:39 INFO Agent received command: run
+2026-02-17 03:16:39 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:16:39 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:16:43 INFO Running runs: ['k02ikp4v']
+2026-02-17 03:16:43 INFO Cleaning up finished run: k02ikp4v
+2026-02-17 03:16:43 INFO Agent received command: run
+2026-02-17 03:16:43 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:43 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:44 INFO Running runs: ['ksvzqrsm']
+2026-02-17 03:16:44 INFO Cleaning up finished run: ksvzqrsm
+2026-02-17 03:16:44 INFO Agent received command: run
+2026-02-17 03:16:44 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:16:44 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:16:48 INFO Running runs: ['ba5mqo0z']
+2026-02-17 03:16:48 INFO Cleaning up finished run: ba5mqo0z
+2026-02-17 03:16:49 INFO Running runs: ['455ngbrg']
+2026-02-17 03:16:49 ERROR Detected 3 failed runs in the first 60 seconds, shutting down.
+2026-02-17 03:16:49 INFO To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+2026-02-17 03:16:55 INFO Running runs: []
+2026-02-17 03:19:06 INFO Running runs: []
+2026-02-17 03:19:07 INFO Agent received command: run
+2026-02-17 03:19:07 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:19:07 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:19:12 INFO Running runs: ['e7a270mq']
+2026-02-17 03:19:12 INFO Cleaning up finished run: e7a270mq
+2026-02-17 03:19:13 INFO Agent received command: run
+2026-02-17 03:19:13 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:19:13 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:19:18 INFO Running runs: ['qu0dh26m']
+2026-02-17 03:19:18 INFO Cleaning up finished run: qu0dh26m
+2026-02-17 03:19:23 INFO Running runs: []
+2026-02-17 03:25:30 INFO Running runs: []
+2026-02-17 03:26:47 INFO Running runs: []
+2026-02-17 03:26:48 INFO Agent received command: run
+2026-02-17 03:26:48 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:26:48 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:26:53 INFO Running runs: ['q4noeq8f']
+2026-02-17 03:26:53 INFO Cleaning up finished run: q4noeq8f
+2026-02-17 03:26:54 INFO Agent received command: run
+2026-02-17 03:26:54 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:26:54 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:26:59 INFO Running runs: ['nivfxjh2']
+2026-02-17 03:26:59 INFO Cleaning up finished run: nivfxjh2
+2026-02-17 03:27:04 INFO Running runs: []
+2026-02-17 03:28:02 INFO Running runs: []
+2026-02-17 03:29:06 INFO Running runs: []
+2026-02-17 03:29:06 INFO Agent received command: run
+2026-02-17 03:29:06 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:29:06 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:29:11 INFO Running runs: ['wutxbouh']
+2026-02-17 03:29:11 INFO Cleaning up finished run: wutxbouh
+2026-02-17 03:29:12 INFO Agent received command: run
+2026-02-17 03:29:12 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:29:12 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:29:17 INFO Running runs: ['24ky67js']
+2026-02-17 03:29:17 INFO Cleaning up finished run: 24ky67js
+2026-02-17 03:29:18 INFO Agent received command: run
+2026-02-17 03:29:18 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:29:18 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:29:23 INFO Running runs: ['0cezgp6c']
+2026-02-17 03:29:23 ERROR Detected 3 failed runs in the first 60 seconds, shutting down.
+2026-02-17 03:29:23 INFO To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+2026-02-17 03:31:06 INFO Running runs: []
+2026-02-17 03:31:07 INFO Agent received command: run
+2026-02-17 03:31:07 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:31:07 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=256 --suite=mt10
+2026-02-17 03:31:12 INFO Running runs: ['iwugus7a']
+2026-02-17 03:33:20 ERROR Error executing GraphQL.
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://api.wandb.ai/graphql
+2026-02-17 03:37:13 INFO Running runs: []
+2026-02-17 03:37:14 INFO Agent received command: run
+2026-02-17 03:37:14 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:37:14 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:37:19 INFO Running runs: ['7yjduxwn']
+2026-02-17 03:37:35 INFO Running runs: []
+2026-02-17 03:37:36 INFO Agent received command: run
+2026-02-17 03:37:36 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:37:36 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:37:41 INFO Running runs: ['bl8axad4']
+2026-02-17 03:37:52 INFO Running runs: []
+2026-02-17 03:37:53 INFO Agent received command: run
+2026-02-17 03:37:53 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:37:53 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=128 --suite=mt10
+2026-02-17 03:37:58 INFO Running runs: ['tfv2h9s4']
+2026-02-17 03:59:02 INFO Cleaning up finished run: 7yjduxwn
+2026-02-17 03:59:03 INFO Agent received command: run
+2026-02-17 03:59:03 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:59:03 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:59:08 INFO Running runs: ['plbck6mi']
+2026-02-17 03:59:34 INFO Cleaning up finished run: bl8axad4
+2026-02-17 03:59:34 INFO Agent received command: run
+2026-02-17 03:59:34 INFO Agent starting run with config:
+	end_inner_fraction: 0.01
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 03:59:34 INFO About to run command: python run_sweep.py --end_inner_fraction=0.01 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 03:59:39 INFO Running runs: ['24m5024g']
+2026-02-17 03:59:43 INFO Cleaning up finished run: tfv2h9s4
+2026-02-17 03:59:43 INFO Agent received command: run
+2026-02-17 03:59:43 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 500
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 03:59:43 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=500 --hidden_dim=256 --suite=mt10
+2026-02-17 03:59:48 INFO Running runs: ['pamkuyhm']
+2026-02-17 04:26:36 INFO Cleaning up finished run: plbck6mi
+2026-02-17 04:26:38 INFO Agent received command: exit
+2026-02-17 04:26:38 INFO Received exit command. Killing runs and quitting.
+2026-02-17 04:26:56 INFO Cleaning up finished run: pamkuyhm
+2026-02-17 04:26:57 INFO Agent received command: run
+2026-02-17 04:26:57 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 128
+	suite: mt10
+2026-02-17 04:26:57 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=128 --suite=mt10
+2026-02-17 04:27:02 INFO Running runs: ['p9nfzrll']
+2026-02-17 04:36:42 INFO Cleaning up finished run: 24m5024g
+2026-02-17 04:36:43 INFO Agent received command: exit
+2026-02-17 04:36:43 INFO Received exit command. Killing runs and quitting.
+2026-02-17 10:18:37 INFO Retry attempt failed:
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connection.py", line 204, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\miniconda3\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connection.py", line 759, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connection.py", line 211, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: HTTPSConnection(host='api.wandb.ai', port=443): Failed to resolve 'api.wandb.ai' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\urllib3\util\retry.py", line 535, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by NameResolutionError("HTTPSConnection(host='api.wandb.ai', port=443): Failed to resolve 'api.wandb.ai' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 70, in execute
+    request = self.session.post(self.url, **post_args)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\sessions.py", line 637, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Max retries exceeded with url: /graphql (Caused by NameResolutionError("HTTPSConnection(host='api.wandb.ai', port=443): Failed to resolve 'api.wandb.ai' ([Errno 11001] getaddrinfo failed)"))
+2026-02-17 12:19:50 INFO Cleaning up finished run: p9nfzrll
+2026-02-17 12:19:51 INFO Agent received command: run
+2026-02-17 12:19:51 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 12:19:51 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=256 --suite=mt10
+2026-02-17 12:19:56 INFO Running runs: ['vcfqp1nk']
+2026-02-17 12:32:30 INFO Running runs: []
+2026-02-17 12:32:31 INFO Agent received command: run
+2026-02-17 12:32:31 INFO Agent starting run with config:
+	approach: baseline
+	batch_size: 101
+	clip_actions: true
+	device: cpu
+	end_fraction: 0.21604015086770084
+	end_inner_fraction: 0.031925394607659835
+	end_upsample: true
+	end_weight: 1
+	episodes: 412
+	epochs: 1101
+	eval_seed: 47
+	lr: 0.0004583487751785417
+	lr_decay_epoch: 201
+	lr_decay_gamma: 0.9085880772932092
+	model: no_end_baseline_64x64.pth
+	save_name: mt10_trained_on_reach_only-1000_epochs_64x64
+	seed: 47
+	source: scale-anchor
+	suite: mt1
+	task_or_suite: reach-v3
+	training_run_id: oxa559xw
+2026-02-17 12:32:31 INFO About to run command: python train.py --approach=baseline --batch_size=101 --clip_actions=true --device=cpu --end_fraction=0.21604015086770084 --end_inner_fraction=0.031925394607659835 --end_upsample=true --end_weight=1 --episodes=412 --epochs=1101 --eval_seed=47 --lr=0.0004583487751785417 --lr_decay_epoch=201 --lr_decay_gamma=0.9085880772932092 --model=no_end_baseline_64x64.pth --save_name=mt10_trained_on_reach_only-1000_epochs_64x64 --seed=47 --source=scale-anchor --suite=mt1 --task_or_suite=reach-v3 --training_run_id=oxa559xw
+2026-02-17 12:32:36 INFO Running runs: ['ypylks49']
+2026-02-17 12:32:36 INFO Cleaning up finished run: ypylks49
+2026-02-17 12:32:36 INFO Agent received command: run
+2026-02-17 12:32:36 INFO Agent starting run with config:
+	approach: baseline
+	batch_size: 95
+	clip_actions: true
+	device: cpu
+	end_fraction: 0.451044223375584
+	end_inner_fraction: 0.08552067747679207
+	end_upsample: true
+	end_weight: 1
+	episodes: 75
+	epochs: 1014
+	eval_seed: 30
+	lr: 0.00038666878517496666
+	lr_decay_epoch: 393
+	lr_decay_gamma: 0.9608669745163694
+	model: no_end_baseline_64x64.pth
+	save_name: mt10_using_mt1_baseline-1000_epochs_32x32
+	seed: 56
+	source: scale-anchor
+	suite: mt10
+	task_or_suite: mt10
+	training_run_id: oxa559xw
+2026-02-17 12:32:36 INFO About to run command: python train.py --approach=baseline --batch_size=95 --clip_actions=true --device=cpu --end_fraction=0.451044223375584 --end_inner_fraction=0.08552067747679207 --end_upsample=true --end_weight=1 --episodes=75 --epochs=1014 --eval_seed=30 --lr=0.00038666878517496666 --lr_decay_epoch=393 --lr_decay_gamma=0.9608669745163694 --model=no_end_baseline_64x64.pth --save_name=mt10_using_mt1_baseline-1000_epochs_32x32 --seed=56 --source=scale-anchor --suite=mt10 --task_or_suite=mt10 --training_run_id=oxa559xw
+2026-02-17 12:32:41 INFO Running runs: ['rimgyosl']
+2026-02-17 12:32:41 INFO Cleaning up finished run: rimgyosl
+2026-02-17 12:32:42 INFO Agent received command: run
+2026-02-17 12:32:42 INFO Agent starting run with config:
+	approach: baseline
+	batch_size: 74
+	clip_actions: false
+	device: cpu
+	end_fraction: 0.2169702062389139
+	end_inner_fraction: 0.07613676257804952
+	end_upsample: false
+	end_weight: 2
+	episodes: 742
+	epochs: 314
+	eval_seed: 67
+	lr: 0.0003457230021530229
+	lr_decay_epoch: 430
+	lr_decay_gamma: 0.9457475444652238
+	model: no_end_baseline_64x64.pth
+	save_name: mt10_trained_on_reach_only-1000_epochs_64x64
+	seed: 56
+	source: scale-anchor
+	suite: mt10
+	task_or_suite: reach-v3
+	training_run_id: oxa559xw
+2026-02-17 12:32:42 INFO About to run command: python train.py --approach=baseline --batch_size=74 --clip_actions=false --device=cpu --end_fraction=0.2169702062389139 --end_inner_fraction=0.07613676257804952 --end_upsample=false --end_weight=2 --episodes=742 --epochs=314 --eval_seed=67 --lr=0.0003457230021530229 --lr_decay_epoch=430 --lr_decay_gamma=0.9457475444652238 --model=no_end_baseline_64x64.pth --save_name=mt10_trained_on_reach_only-1000_epochs_64x64 --seed=56 --source=scale-anchor --suite=mt10 --task_or_suite=reach-v3 --training_run_id=oxa559xw
+2026-02-17 12:32:47 INFO Running runs: ['hzgxf4gq']
+2026-02-17 12:32:47 ERROR Detected 3 failed runs in the first 60 seconds, shutting down.
+2026-02-17 12:32:47 INFO To disable this check set WANDB_AGENT_DISABLE_FLAPPING=true
+2026-02-17 12:47:28 INFO Running runs: []
+2026-02-17 12:47:28 INFO Agent received command: run
+2026-02-17 12:47:28 INFO Agent starting run with config:
+	end_inner_fraction: 0
+	end_weight: 1
+	epochs: 1000
+	hidden_dim: 256
+	suite: mt10
+2026-02-17 12:47:28 INFO About to run command: python run_sweep.py --end_inner_fraction=0 --end_weight=1 --epochs=1000 --hidden_dim=256 --suite=mt10
+2026-02-17 12:47:33 INFO Running runs: ['f0tfjo5g']
+2026-02-17 12:47:45 INFO Running runs: []
+2026-02-17 12:47:45 INFO Agent received command: exit
+2026-02-17 12:47:45 INFO Received exit command. Killing runs and quitting.
+2026-02-17 12:47:48 ERROR Error executing GraphQL.
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+2026-02-17 12:47:48 ERROR Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running
+2026-02-17 12:47:50 INFO Running runs: []
+2026-02-17 12:47:50 INFO Agent received command: exit
+2026-02-17 12:47:50 INFO Received exit command. Killing runs and quitting.
+2026-02-17 13:07:00 ERROR Error executing GraphQL.
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+2026-02-17 13:07:00 ERROR Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running
+2026-02-17 13:50:57 ERROR Error executing GraphQL.
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+2026-02-17 13:50:57 ERROR Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 160, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 394, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\vendor\gql-0.2.0\wandb_gql\client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\gql_request.py", line 71, in execute
+    request.raise_for_status()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://api.wandb.ai/graphql
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 149, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\cli\cli.py", line 1765, in agent
+    wandb_agent.agent(
+    ~~~~~~~~~~~~~~~~~^
+        sweep_id,
+        ^^^^^^^^^
+    ...<3 lines>...
+        forward_signals=forward_signals,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 669, in agent
+    return run_agent(
+        sweep_id,
+    ...<5 lines>...
+        forward_signals=forward_signals,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 622, in run_agent
+    agent.run()
+    ~~~~~~~~~^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\wandb_agent.py", line 288, in run
+    agent = self._api.register_agent(socket.gethostname(), sweep_id=self._sweep_id)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\internal.py", line 149, in register_agent
+    return self.api.register_agent(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\apis\normalize.py", line 28, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 3111, in register_agent
+    response = self.gql(
+        mutation,
+    ...<6 lines>...
+        check_retry_fn=util.no_retry_4xx,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\internal\internal_api.py", line 364, in gql
+    ret = self._retry_gql(
+        *args,
+        retry_cancel_event=self.context.cancel_event,
+        **kwargs,
+    )
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 163, in __call__
+    if not retry_loop.should_retry(e):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\sdk\lib\retry.py", line 280, in should_retry
+    retry_check_result = self._retry_check(exception)
+  File "C:\Users\nancy\Desktop\CS229_FinalProject\venv\Lib\site-packages\wandb\util.py", line 902, in no_retry_4xx
+    raise UsageError(body["errors"][0]["message"])
+wandb.errors.errors.UsageError: Sweep nancy-bao-stanford-university/CS229_FinalProject/q9lhaz7t is not running

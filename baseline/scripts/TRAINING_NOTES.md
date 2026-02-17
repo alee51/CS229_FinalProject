@@ -1,0 +1,97 @@
+TRAINING_NOTES.md
+
+### Current Status
+Trying to improve baseline for mt-10 slightly
+- With the overnight sweep, found 65% for 256x256, 500 epochs, end_inner_weight being 0. Going to try setting all end fractions to 0 by default now. 
+- 73% for 256 x 256, 1000 epochs, no end_frac or end_inner_frac. lever-pull stuck at 0; reach is 22; window-open is 76, even tho other models had 100% on window-open. 
+
+###### How to further improve
+- Add weights & biases integration
+- Train the baseline model on MT-10 and test it. 
+
+#### Longer-term future steps
+
+### Past Attempts
+<details>
+    <summary> tail upsampling fail </summary>
+I tried upsampling the tail, but even though training loss got super low, it didn't reflect in the success rate. I think what happened is that even though the model gets super close, the tail chunk I'm taking is too big, so I upsample both times the arm is close to the goal; when the arm is moving fast-ish and super slow towards the goal. Even with very good training, the success rate only got up to 54%. 
+</details>
+<details>
+  <summary>Successful 98% baseline for MT-1</summary>
+
+Here’s a full spec you can drop into your notes for **no_end_baseline_64x64.pth**:
+
+---
+
+## no_end_baseline_64x64.pth – full training config
+
+**Command (what you ran):**
+```bash
+python train.py --name no_end_baseline_64x64.pth --end-weight 1.0 --epochs 2000 --hidden 64 64
+```
+
+**All parameters (explicit + defaults):**
+
+| Parameter | Value | CLI flag |
+|-----------|--------|----------|
+| save_name | no_end_baseline_64x64.pth | --name |
+| end_weight | 1.0 | --end-weight |
+| num_epochs | 2000 | --epochs |
+| hidden_sizes | [64, 64] | --hidden 64 64 |
+| learning_rate | 0.0003 | --lr (default) |
+| batch_size | 64 | --batch (default) |
+| clip_actions | True | (default; not --no-clip). test.py also clips by default; use --no-clip there to disable. |
+| data_path | baseline/data/expert_data_reach-v3.npz | --data (default) |
+| end_fraction | 0.3 | --end-fraction (default) |
+| end_inner_weight | None | --end-inner-weight (default) |
+| end_inner_fraction | 0.05 | --end-inner-fraction (default) |
+| end_upsample | False | (default; no --end-upsample) |
+| save_run | True | (default; not --no-save-run) |
+| keep_runs | 50 | --keep-runs (default) |
+| eval_seed | 42 | --eval-seed (default) |
+| lr_decay_epoch | None | --lr-decay-epoch (default) |
+| lr_decay_gamma | 0.5 | --lr-decay-gamma (default) |
+
+**Model (ClonePolicy):**
+
+- **Architecture:** MLP: `Linear(input_dim → 64) → ReLU → Linear(64 → 64) → ReLU → Linear(64 → output_dim)`.
+- **input_dim:** from expert data (states in `expert_data_reach-v3.npz`); for reach-v3 this is the flattened observation dimension.
+- **output_dim:** from expert data (actions in same .npz); for reach-v3 this is the action dimension.
+- **Activation:** ReLU after each hidden layer; no activation on the output (regression).
+- **Optimizer:** Adam, lr=0.0003.
+- **Loss:** MSE; with end_weight=1.0 there is no trajectory-end weighting (uniform over all (s,a) pairs).
+
+**Data:** `baseline/data/expert_data_reach-v3.npz` (default path).
+
+**Equivalent full command with all defaults written out:**
+```bash
+python train.py --name no_end_baseline_64x64.pth --end-weight 1.0 --epochs 2000 --hidden 64 64 \
+  --lr 0.0003 --batch 64 --end-fraction 0.3 --end-inner-fraction 0.05 \
+  --keep-runs 50 --eval-seed 42 --lr-decay-gamma 0.5
+```
+(Omitting `--no-clip`, `--data`, `--end-inner-weight`, `--no-save-run`, `--lr-decay-epoch`, `--end-upsample` leaves them at the defaults above.)
+</details>
+
+<details>
+<summary>Baseline for mt-10 </summary>
+Trying to get a baseline on MT-10. Currently, successfully collected 50 expert demonstrations for each of the 10 tasks in MT-10. 
+
+Training the same model on mt-10 gives 100% on drawer open, drawer close, window open. 0% on lever pull. 22% on reach. kind of confusing... 
+- reach-v3: 22.0%
+- push-v3: 28.0%
+- pick-place-v3: 18.0%
+- door-open-v3: 72.0%
+- door-close-v3: 66.0%
+- drawer-open-v3: 100.0%
+- drawer-close-v3: 100.0%
+- button-press-v3: 92.0%
+- lever-pull-v3: 0.0%
+- window-open-v3: 100.0%
+</details>
+
+<details>
+    <summary> mt-10 baseline improved 62.4% 128x128; 300 epochs; 0.01 end_inner_fraction </summary>
+this is the new baseline; outperforms all others in its sweep of [64, 128], [100, 300] epochs, [0.01, 0.005, 0.05] end_inner_fraction. It even outperforms the 64x64 500 epoch baseline for mt10. 
+</details>
+<details>
+

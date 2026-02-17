@@ -1,0 +1,21 @@
+# W&B sweep: MT-10 one-at-a-time — epochs only (2 runs).
+# Create: wandb sweep baseline/sweep_mt10_epochs.yaml
+# Run:    wandb agent <entity>/CS229_FinalProject/<sweep_id>
+
+program: run_sweep.py
+method: grid
+metric:
+  name: eval/success_rate_avg
+  goal: maximize
+
+parameters:
+  suite:
+    value: mt10
+  end_weight:
+    value: 1.0
+  epochs:
+    values: [500, 1000]
+  hidden_dim:
+    value: 128
+  end_inner_fraction:
+    value: 0.01

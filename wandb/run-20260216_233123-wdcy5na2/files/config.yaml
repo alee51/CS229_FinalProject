@@ -1,0 +1,40 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            z7dv6ftylm8p5aw5u7nemd9zrjnyii8b:
+                codePath: log_wandb_scale_anchors.py
+                codePathLocal: log_wandb_scale_anchors.py
+                email: nancy.x.bao@gmail.com
+                executable: C:\Users\nancy\Desktop\CS229_FinalProject\venv\Scripts\python.exe
+                git:
+                    commit: 9a86a955b96a7a7cc868819fdd186a693b613bf6
+                    remote: git@github.com:alee51/CS229_FinalProject.git
+                host: NB_Thinkpad_X9
+                os: Windows-11-10.0.26200-SP0
+                program: C:\Users\nancy\Desktop\CS229_FinalProject\log_wandb_scale_anchors.py
+                python: CPython 3.13.11
+                root: C:\Users\nancy\Desktop\CS229_FinalProject
+                startedAt: "2026-02-17T07:31:23.690496Z"
+                writerId: z7dv6ftylm8p5aw5u7nemd9zrjnyii8b
+        m: []
+        python_version: 3.13.11
+        t:
+            "3":
+                - 2
+                - 13
+                - 15
+            "4": 3.13.11
+            "5": 0.25.0
+            "8":
+                - 3
+            "10":
+                - 20
+            "12": 0.25.0
+            "13": windows-amd64
+approach:
+    value: baseline
+source:
+    value: scale-anchor
+suite:
+    value: mt10

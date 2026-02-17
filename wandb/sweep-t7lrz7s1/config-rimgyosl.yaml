@@ -1,0 +1,44 @@
+wandb_version: 1
+
+approach:
+  value: baseline
+batch_size:
+  value: 95
+clip_actions:
+  value: 'true'
+device:
+  value: cpu
+end_fraction:
+  value: 0.451044223375584
+end_inner_fraction:
+  value: 0.08552067747679207
+end_upsample:
+  value: 'true'
+end_weight:
+  value: 1
+episodes:
+  value: 75
+epochs:
+  value: 1014
+eval_seed:
+  value: 30
+lr:
+  value: 0.00038666878517496666
+lr_decay_epoch:
+  value: 393
+lr_decay_gamma:
+  value: 0.9608669745163694
+model:
+  value: no_end_baseline_64x64.pth
+save_name:
+  value: mt10_using_mt1_baseline-1000_epochs_32x32
+seed:
+  value: 56
+source:
+  value: scale-anchor
+suite:
+  value: mt10
+task_or_suite:
+  value: mt10
+training_run_id:
+  value: oxa559xw

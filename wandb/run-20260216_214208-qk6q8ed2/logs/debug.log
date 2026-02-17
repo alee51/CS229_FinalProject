@@ -1,0 +1,26 @@
+2026-02-16 21:42:08,052 INFO    MainThread:31736 [wandb_setup.py:_flush():81] Current SDK version is 0.25.0
+2026-02-16 21:42:08,052 INFO    MainThread:31736 [wandb_setup.py:_flush():81] Configure stats pid to 31736
+2026-02-16 21:42:08,052 INFO    MainThread:31736 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-02-16 21:42:08,052 INFO    MainThread:31736 [wandb_init.py:setup_run_log_directory():717] Logging user logs to C:\Users\nancy\Desktop\CS229_FinalProject\wandb\run-20260216_214208-qk6q8ed2\logs\debug.log
+2026-02-16 21:42:08,060 INFO    MainThread:31736 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to C:\Users\nancy\Desktop\CS229_FinalProject\wandb\run-20260216_214208-qk6q8ed2\logs\debug-internal.log
+2026-02-16 21:42:08,060 INFO    MainThread:31736 [wandb_init.py:init():844] calling init triggers
+2026-02-16 21:42:08,060 INFO    MainThread:31736 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'_wandb': {}}
+2026-02-16 21:42:08,060 INFO    MainThread:31736 [wandb_init.py:init():892] starting backend
+2026-02-16 21:42:10,454 INFO    MainThread:31736 [wandb_init.py:init():895] sending inform_init request
+2026-02-16 21:42:10,523 INFO    MainThread:31736 [wandb_init.py:init():903] backend started and connected
+2026-02-16 21:42:10,543 INFO    MainThread:31736 [wandb_init.py:init():973] updated telemetry
+2026-02-16 21:42:10,624 INFO    MainThread:31736 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-02-16 21:42:13,257 INFO    MainThread:31736 [wandb_init.py:init():1042] starting run threads in backend
+2026-02-16 21:42:13,310 INFO    MainThread:31736 [wandb_run.py:_console_start():2524] atexit reg
+2026-02-16 21:42:13,310 INFO    MainThread:31736 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-02-16 21:42:13,310 INFO    MainThread:31736 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-02-16 21:42:13,310 INFO    MainThread:31736 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-02-16 21:42:13,312 INFO    MainThread:31736 [wandb_init.py:init():1082] run started, returning control to user process
+2026-02-16 21:42:13,313 INFO    MainThread:31736 [wandb_run.py:_config_callback():1403] config_cb None None {'approach': 'baseline', 'model': 'no_end_baseline_64x64.pth', 'task_or_suite': 'reach-v3', 'episodes': 50, 'seed': None, 'clip_actions': True}
+2026-02-16 21:42:13,313 INFO    MainThread:31736 [wandb_run.py:_config_callback():1403] config_cb None None {'device': 'cpu'}
+2026-02-16 21:42:13,315 INFO    MainThread:31736 [wandb_run.py:_finish():2291] finishing run nancy-bao-stanford-university/cs229-metaworld/qk6q8ed2
+2026-02-16 21:42:13,315 INFO    MainThread:31736 [wandb_run.py:_atexit_cleanup():2490] got exitcode: 0
+2026-02-16 21:42:13,316 INFO    MainThread:31736 [wandb_run.py:_restore():2472] restore
+2026-02-16 21:42:13,316 INFO    MainThread:31736 [wandb_run.py:_restore():2478] restore done
+2026-02-16 21:42:14,038 INFO    MainThread:31736 [wandb_run.py:_footer_sync_info():3868] logging synced files

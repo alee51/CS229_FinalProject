@@ -3,5 +3,22 @@
         {
             "path": "."
         }
+<<<<<<< HEAD
     ]
 }
+=======
+    ],
+    "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-python.python",
+            "ms-python.vscode-pylance",
+            "ms-jupyter.jupyter"
+        ]
+    }
+}
+>>>>>>> nancy-branch

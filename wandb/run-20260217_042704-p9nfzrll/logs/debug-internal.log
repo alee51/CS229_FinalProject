@@ -1,0 +1,16 @@
+{"time":"2026-02-17T04:27:06.3009103-08:00","level":"INFO","msg":"stream: starting","core version":"0.25.0"}
+{"time":"2026-02-17T04:27:06.4994506-08:00","level":"INFO","msg":"stream: created new stream","id":"p9nfzrll"}
+{"time":"2026-02-17T04:27:06.4999571-08:00","level":"INFO","msg":"handler: started","stream_id":"p9nfzrll"}
+{"time":"2026-02-17T04:27:06.501152-08:00","level":"INFO","msg":"stream: started","id":"p9nfzrll"}
+{"time":"2026-02-17T04:27:06.501152-08:00","level":"INFO","msg":"writer: started","stream_id":"p9nfzrll"}
+{"time":"2026-02-17T04:27:06.501152-08:00","level":"INFO","msg":"sender: started","stream_id":"p9nfzrll"}
+{"time":"2026-02-17T10:18:33.8227589-08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/nancy-bao-stanford-university/CS229_FinalProject/p9nfzrll/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
+{"time":"2026-02-17T10:18:35.9349175-08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/nancy-bao-stanford-university/CS229_FinalProject/p9nfzrll/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
+{"time":"2026-02-17T10:25:01.1242531-08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/nancy-bao-stanford-university/CS229_FinalProject/p9nfzrll/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
+{"time":"2026-02-17T10:27:30.3592548-08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/nancy-bao-stanford-university/CS229_FinalProject/p9nfzrll/file_stream\": dial tcp: lookup api.wandb.ai: no such host"}
+{"time":"2026-02-17T12:19:45.4317573-08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-02-17T12:19:45.6197513-08:00","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-02-17T12:19:45.6278885-08:00","level":"INFO","msg":"stream: closing","id":"p9nfzrll"}
+{"time":"2026-02-17T12:19:45.6278885-08:00","level":"INFO","msg":"handler: closed","stream_id":"p9nfzrll"}
+{"time":"2026-02-17T12:19:45.6278885-08:00","level":"INFO","msg":"sender: closed","stream_id":"p9nfzrll"}
+{"time":"2026-02-17T12:19:45.6278885-08:00","level":"INFO","msg":"stream: closed","id":"p9nfzrll"}
