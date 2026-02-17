@@ -6,6 +6,10 @@ Run all commands from the **project root** (`CS229_FinalProject/`) unless noted.
 
 ## 1. Data collection
 
+**Requires:** `metaworld` installed (`pip install metaworld`). Run from `baseline/scripts` or project root.
+
+### Single task (default: reach-v3)
+
 Collect **one expert trajectory per goal** (50 total). Saves `baseline/data/expert_data_reach-v3.npz`. Run once before training.
 
 ```bash
@@ -13,10 +17,44 @@ cd baseline/scripts
 python collect_one_per_goal.py
 ```
 
-Or from project root (if your PATH includes the script):
+With another task or custom output:
+
+```bash
+cd baseline/scripts
+python collect_one_per_goal.py --task push-v3
+python collect_one_per_goal.py --task reach-v3 --output ../data/my_reach.npz
+```
+
+### MT-10 (all 10 tasks)
+
+Collect **one trajectory per goal per task** for the MT-10 suite (at most 500 trajectories: 10 tasks × 50 goals). Saves `baseline/data/expert_data_mt10.npz` with `states`, `actions`, `task_ids` (and `goal_indices`, `task_names`). Use this file for training with `train.py --mt10` (when implemented).
+
+```bash
+cd baseline/scripts
+python collect_one_per_goal.py --mt10
+```
+
+With custom output path or directory:
+
+```bash
+python collect_one_per_goal.py --mt10 --output ../data/expert_data_mt10.npz
+python collect_one_per_goal.py --mt10 --output-dir /path/to/data
+```
+
+**CLI reference:**
+
+| Option | Description |
+|--------|-------------|
+| `--mt10` | Collect for all 10 MT-10 tasks; save combined npz with `task_ids`. |
+| `--task NAME` | Single-task mode: task name (default: `reach-v3`). Ignored if `--mt10`. |
+| `--output PATH` | Output file path. Default: `../data/expert_data_{task}.npz` or `../data/expert_data_mt10.npz`. |
+| `--output-dir DIR` | Output directory when `--output` is not set (default: `baseline/data`). |
+
+From project root:
 
 ```bash
 python baseline/scripts/collect_one_per_goal.py
+python baseline/scripts/collect_one_per_goal.py --mt10
 ```
 
 ---
@@ -153,7 +191,8 @@ python check_data_len.py   # if present: prints trajectory count and total sampl
 
 | What              | Command |
 |-------------------|--------|
-| Collect expert    | `cd baseline/scripts && python collect_one_per_goal.py` |
+| Collect expert (single task) | `cd baseline/scripts; python collect_one_per_goal.py` |
+| Collect expert (MT-10) | `cd baseline/scripts; python collect_one_per_goal.py --mt10` |
 | Train             | `python train.py --approach baseline` |
 | Eval 50 goals     | `python test.py --approach baseline --model latest.pth --episodes 50 --seed 42 --clip` |
 | View 3 success + 3 fail | `python test.py --approach baseline --model latest.pth --seed 42 --clip --visualize-success-fail 3` |
