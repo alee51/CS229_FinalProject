@@ -1004,3 +1004,5 @@
 {"time":"2026-02-17T15:23:46.7635972-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
 {"time":"2026-02-17T15:24:01.7630557-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
 {"time":"2026-02-17T15:24:16.763282-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:31:16.7633096-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
+{"time":"2026-02-17T15:31:31.7652186-08:00","level":"ERROR","msg":"monitor: error sampling metrics: process does not exist"}
