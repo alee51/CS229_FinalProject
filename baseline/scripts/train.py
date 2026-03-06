@@ -11,13 +11,14 @@ import sys
 import time
 from datetime import datetime
 
-# Shared task registry (baseline/tasks.py)
+# Task registry and eval from core (baseline.tasks re-exports core)
 _SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _BASELINE_DIR = os.path.dirname(_SCRIPT_DIR)
 _PROJECT_ROOT = os.path.dirname(_BASELINE_DIR)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 from baseline.tasks import get_tasks, num_tasks, policy_input_dim, obs_dim
+from core.eval import run_50_goal_eval, run_multitask_eval
 
 # Backward compatibility: MT10_TASKS for code that imports it (e.g. test.py)
 MT10_TASKS = get_tasks("mt10")
@@ -66,141 +67,21 @@ def get_device(device_prefer="auto"):
     return torch.device("cpu")
 
 
-def one_hot_task(task_id, num_tasks=10):
-    """Return one-hot vector of shape (num_tasks,) for the given task index."""
-    out = np.zeros(num_tasks, dtype=np.float32)
-    out[task_id] = 1.0
-    return out
-
-
 def eval_50_goals(policy, task_name="reach-v3", clip_actions=True, eval_seed=42, device=None):
-    """Run 50 episodes (1 per goal), return success_rate, goal_success (list of 50 bools), failed_goals (list of indices).
-    If eval_seed is not None, env.reset(seed=eval_seed+goal_idx) for reproducible eval (match test.py --seed N)."""
-    import metaworld
-    if device is None:
-        device = torch.device("cpu")
-    # Match test.py: fix RNG so eval is reproducible and matches test.py --seed N
-    if eval_seed is not None:
-        np.random.seed(eval_seed)
-        torch.manual_seed(eval_seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(eval_seed)
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-        xpu = getattr(torch, "xpu", None)
-        if xpu is not None and xpu.is_available():
-            try:
-                xpu.manual_seed_all(eval_seed)
-            except Exception:
-                pass
-    policy.eval()
-    mt1 = metaworld.MT1(task_name)
-    env = mt1.train_classes[task_name]()
-    goal_success = []
-    for goal_idx in range(min(50, len(mt1.train_tasks))):
-        task = mt1.train_tasks[goal_idx]
-        env.set_task(task)
-        if eval_seed is not None:
-            try:
-                out = env.reset(seed=eval_seed + goal_idx)
-            except TypeError:
-                out = env.reset()
-        else:
-            out = env.reset()
-        obs = out[0] if isinstance(out, tuple) else out
-        if isinstance(obs, tuple):
-            obs = obs[0] if len(obs) > 0 else obs
-        obs = np.asarray(obs).flatten()
-        done = False
-        steps = 0
-        while not done and steps < 500:
-            obs_t = torch.FloatTensor(obs).to(device)
-            with torch.no_grad():
-                action = policy(obs_t).cpu().numpy()
-            action = np.asarray(action).flatten().astype(np.float64)
-            if clip_actions:
-                action = np.clip(action, -1.0, 1.0)
-            step_out = env.step(action)
-            if len(step_out) == 5:
-                obs, _, term, trunc, info = step_out
-            else:
-                obs, _, done, info = step_out
-                term, trunc = done, False
-            done = term or trunc
-            obs = np.asarray(obs).flatten() if not done else obs
-            steps += 1
-        goal_success.append(bool(info.get("success", False)))
-    failed_goals = [i for i, s in enumerate(goal_success) if not s]
-    success_rate = sum(goal_success) / len(goal_success) * 100
+    """Run 50 episodes (1 per goal). Uses core.run_50_goal_eval."""
+    device = device or torch.device("cpu")
+    success_rate, goal_success, failed_goals = run_50_goal_eval(
+        policy, task_name=task_name, clip_actions=clip_actions, seed=eval_seed, device=device
+    )
     return success_rate, goal_success, failed_goals
 
 
 def eval_multitask(policy, suite, clip_actions=True, eval_seed=42, device=None):
-    """Run 50 episodes (1 per goal) for each task in suite; input = concat(obs, one_hot(task_id)).
-    Returns success_rate_per_task (list of floats), success_rate_avg (float)."""
-    import metaworld
-    if device is None:
-        device = torch.device("cpu")
-    task_list = get_tasks(suite)
-    n_tasks = len(task_list)
-    if eval_seed is not None:
-        np.random.seed(eval_seed)
-        torch.manual_seed(eval_seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(eval_seed)
-            torch.backends.cudnn.deterministic = True
-            torch.backends.cudnn.benchmark = False
-        xpu = getattr(torch, "xpu", None)
-        if xpu is not None and xpu.is_available():
-            try:
-                xpu.manual_seed_all(eval_seed)
-            except Exception:
-                pass
-    policy.eval()
-    success_rate_per_task = []
-    for task_id, task_name in enumerate(task_list):
-        mt1 = metaworld.MT1(task_name)
-        env = mt1.train_classes[task_name]()
-        goal_success = []
-        n_goals = min(50, len(mt1.train_tasks))
-        for goal_idx in range(n_goals):
-            task = mt1.train_tasks[goal_idx]
-            env.set_task(task)
-            if eval_seed is not None:
-                try:
-                    out = env.reset(seed=eval_seed + task_id * 1000 + goal_idx)
-                except TypeError:
-                    out = env.reset()
-            else:
-                out = env.reset()
-            obs = out[0] if isinstance(out, tuple) else out
-            if isinstance(obs, tuple):
-                obs = obs[0] if len(obs) > 0 else obs
-            obs = np.asarray(obs).flatten()
-            oh = one_hot_task(task_id, num_tasks=n_tasks)
-            done = False
-            steps = 0
-            while not done and steps < 500:
-                x = np.concatenate([obs, oh]).astype(np.float32)
-                obs_t = torch.FloatTensor(x).to(device)
-                with torch.no_grad():
-                    action = policy(obs_t).cpu().numpy()
-                action = np.asarray(action).flatten().astype(np.float64)
-                if clip_actions:
-                    action = np.clip(action, -1.0, 1.0)
-                step_out = env.step(action)
-                if len(step_out) == 5:
-                    obs, _, term, trunc, info = step_out
-                else:
-                    obs, _, done, info = step_out
-                    term, trunc = done, False
-                done = term or trunc
-                obs = np.asarray(obs).flatten() if not done else obs
-                steps += 1
-            goal_success.append(bool(info.get("success", False)))
-        rate = sum(goal_success) / len(goal_success) * 100
-        success_rate_per_task.append(rate)
-    success_rate_avg = sum(success_rate_per_task) / len(success_rate_per_task)
+    """Run 50 episodes (1 per goal) for each task in suite. Uses core.run_multitask_eval."""
+    device = device or torch.device("cpu")
+    success_rate_per_task, success_rate_avg = run_multitask_eval(
+        policy, suite, clip_actions=clip_actions, seed=eval_seed, device=device
+    )
     return success_rate_per_task, success_rate_avg
 
 
@@ -267,7 +148,7 @@ def infer_baseline_policy_architecture(model_path):
 
 
 def train_model(learning_rate=0.0003, num_epochs=20, batch_size=64, hidden_sizes=None,
-                save_name='cloned_policy.pth', clip_actions=True, data_path=None,
+                save_name='latest_policy.pth', clip_actions=True, data_path=None,
                 end_weight=3.0, end_fraction=0.3, end_inner_weight=None, end_inner_fraction=0.0,
                 save_run=True, keep_runs=3, eval_seed=42, lr_decay_epoch=None, lr_decay_gamma=0.5,
                 end_upsample=False, suite=None, device="auto",
@@ -720,7 +601,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch", type=int, default=cfg.get("batch_size", 64), help="Batch size")
     parser.add_argument("--hidden", type=int, nargs="+", default=cfg.get("hidden_sizes", [256, 256, 128]),
                         help="Hidden layer sizes")
-    parser.add_argument("--name", type=str, default=cfg.get("save_name", "cloned_policy.pth"),
+    parser.add_argument("--name", type=str, default=cfg.get("save_name", "latest_policy.pth"),
                         help="Model save name")
     parser.add_argument("--no-clip", action="store_true", help="Do not clip actions (default: clip to [-1, 1])")
     parser.add_argument("--data", type=str, default=None, help="Path to expert data")

@@ -37,7 +37,7 @@ Examples:
         """,
     )
     parser.add_argument("--approach", type=str, default="baseline",
-                        choices=["baseline", "vae", "tce", "hybrid"],
+                        choices=["baseline", "vae", "tce", "dagger", "hybrid"],
                         help="Which approach to train (default: baseline)")
     parser.add_argument("--config", type=str, default=None,
                         help="Path to train config YAML (baseline only; default: baseline/train_config.yaml)")
@@ -47,7 +47,7 @@ Examples:
     parser.add_argument("--batch", type=int, default=cfg.get("batch_size", 64), help="Batch size")
     parser.add_argument("--hidden", type=int, nargs="+", default=cfg.get("hidden_sizes", [256, 256, 128]),
                         help="Hidden layer sizes")
-    parser.add_argument("--name", type=str, default=cfg.get("save_name", "cloned_policy.pth"),
+    parser.add_argument("--name", type=str, default=cfg.get("save_name", "latest_policy.pth"),
                         help="Model save name")
     parser.add_argument("--no-clip", action="store_true", help="Do not clip actions (default: clip to [-1, 1])")
     parser.add_argument("--end-weight", type=float, default=cfg.get("end_weight", 3.0),

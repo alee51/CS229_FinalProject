@@ -14,37 +14,48 @@
 See **COMMANDS.md** for the full command reference (data collection, training, testing, view 3/3).
 
 1. **Collect expert data** (50 trajectories, 1 per goal): `cd baseline/scripts && python collect_one_per_goal.py` → `baseline/data/expert_data_reach-v3.npz`.
-2. **Train** (from repo root): `python train.py --approach baseline` → `baseline/models/cloned_policy.pth`.
-3. **Evaluate** (50 episodes = 1 per goal): `python test.py --approach baseline --model cloned_policy.pth --episodes 50`.
+2. **Train** (from repo root): `python train.py --approach baseline` → `baseline/models/latest_policy.pth`.
+3. **Evaluate** (50 episodes = 1 per goal): `python test.py --approach baseline --model latest_policy.pth --episodes 50`.
 4. **View 3 success + 3 fail** (same run, labels match): `python test.py --approach baseline --model latest.pth --visualize-success-fail 3`.
 
 ## Project Structure
 
 ```
 CS229_FinalProject/
-├── baseline/              # Baseline behavioral cloning (reach-v3)
-│   ├── models/           # Trained policy .pth files
-│   ├── scripts/          # Training and utility scripts
-│   └── data/             # Expert trajectories (.npz files)
+├── core/                 # Shared: tasks, env factory, eval API (MT10/MT50 from library)
+│   ├── tasks.py         # get_tasks(suite), num_tasks, obs_dim, policy_input_dim
+│   ├── env.py           # make_env(task_name) -> (env, train_tasks)
+│   └── eval.py          # run_50_goal_eval, run_multitask_eval
 │
-├── vae/                  # VAE-based representation (TODO)
+├── scripts_all/          # Scripts for all approaches (run from project root)
+│   ├── run_sweep.py     # W&B sweep entrypoint (baseline training)
+│   ├── log_wandb_scale_anchors.py   # One-off: 0–100% scale anchors for MT10 parallel plot
+│   └── visualize_expert_demo.py    # Dev: render expert on MT-10 goals
+│
+├── baseline/             # Baseline behavioral cloning
+│   ├── models/          # Trained policy .pth (latest_policy.pth, runs/run_*.pth)
+│   ├── scripts/         # train.py, test.py, collect_one_per_goal.py, etc.
+│   └── data/            # Expert trajectories (.npz)
+│
+├── vae/                  # VAE-based representation (see vae/README.md)
+│   ├── models/          # latest_policy.pth and run checkpoints
+│   ├── scripts/         # Entrypoint for root train.py / test.py (train_model, ClonePolicy)
+│   ├── data/
+│   └── (original VAE code: train_vae.py, data_utils.py, models.py, dataset.py — unchanged)
+│
+├── tce/                  # Temporal Contrastive Encoding (stub)
 │   ├── models/
-│   ├── scripts/
+│   ├── scripts/         # train.py, test.py stubs
 │   └── data/
 │
-├── tce/                  # Temporal Contrastive Encoding (TODO)
+├── dagger/               # DAgger / distillation (stub)
 │   ├── models/
-│   ├── scripts/
+│   ├── scripts/         # train.py, test.py stubs
 │   └── data/
 │
-├── hybrid/               # Hybrid VAE + TCE approach (TODO)
-│   ├── models/
-│   ├── scripts/
-│   └── data/
-│
-├── train.py              # Unified training script
-├── test.py               # Unified testing script
-├── archive/              # Legacy scripts (see archive/README.md)
+├── train.py              # Unified training entrypoint (--approach baseline|vae|tce|dagger)
+├── test.py               # Unified testing entrypoint (--approach baseline|vae|tce|dagger)
+├── archive/              # Legacy scripts (see archive/README.md if present)
 └── README.md
 ```
 
@@ -71,13 +82,13 @@ python train.py --approach baseline --no-clip --epochs 50 --lr 0.001
 
 Test on all 50 goals (1 episode per goal; sufficient because env is deterministic). Clipping is on by default (same as train.py); use `--no-clip` to disable.
 ```bash
-python test.py --approach baseline --model cloned_policy.pth --episodes 50
+python test.py --approach baseline --model latest_policy.pth --episodes 50
 ```
 Success rate = fraction of the 50 goals succeeded.
 
 Test on a different task:
 ```bash
-python test.py --approach baseline --model cloned_policy.pth --task push-v3
+python test.py --approach baseline --model latest_policy.pth --task push-v3
 ```
 
 ## Available Scripts
@@ -88,7 +99,7 @@ Collects exactly 1 expert trajectory per goal (50 total). Saves to `baseline/dat
 ### baseline/scripts/train.py
 Training script for the baseline approach. Supports custom LR, epochs, batch size, hidden sizes, action clipping, end-weight/end-fraction, and `--data` path. By default each run is logged and models are kept in unique files:
 - **baseline/training_runs.json** – full list of run records (timestamp, hyperparameters, final_loss, success_rate, goal_success, failed_goals, run_path). All runs are stored here for hyperparameter tuning.
-- **baseline/models/runs/** – each run saved as `run_YYYYMMDD_HHMMSS.pth` (unique per run). Last `--keep-runs` copies kept (default 50; use `--keep-runs 0` to keep all). Latest run is also copied to `cloned_policy.pth`.
+- **baseline/models/runs/** – each run saved as `run_YYYYMMDD_HHMMSS.pth` (unique per run). Last `--keep-runs` copies kept (default 50; use `--keep-runs 0` to keep all). Latest run is also copied to `latest_policy.pth`.
 - **baseline/RUNS_SUMMARY.md** – table of the **last 10 runs** (timestamp, epochs, end_weight, final_loss, success_rate, failed_goals). Regenerated after each training run.
 - Use `--no-save-run` to skip logging and run copies.
 
@@ -101,9 +112,9 @@ Canonical baseline eval implementation. Root `test.py` delegates to this when `-
 ## Next Steps
 
 1. **Baseline** - Improve success rate on the 50 goals (data, architecture, training)
-2. **VAE representation** - Smooth latent manifold encoding (TODO)
-3. **TCE** - Temporal contrastive learning (TODO)
-4. **Hybrid** - Combine VAE + TCE (TODO)
+2. **VAE** - Smooth latent manifold encoding (entrypoint: vae/scripts/; see vae/README.md)
+3. **TCE** - Temporal contrastive learning (stub in tce/scripts/)
+4. **DAgger** - DAgger / distillation (stub in dagger/scripts/)
 5. **MT-10** - Evaluate on all 10 MetaWorld tasks (optional)
 
 ## Dependencies

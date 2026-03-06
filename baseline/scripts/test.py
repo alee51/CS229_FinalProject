@@ -22,6 +22,7 @@ if _PROJECT_ROOT not in sys.path:
 sys.path.insert(0, _SCRIPT_DIR)
 from train import ClonePolicy, MT10_TASKS, one_hot_task, get_device, infer_baseline_policy_architecture
 from baseline.tasks import get_tasks, policy_input_dim
+from core.env import make_env
 
 # #region agent log
 _DEBUG_LOG = r"c:\Users\nancy\Desktop\CS229_FinalProject\.cursor\debug.log"
@@ -64,13 +65,9 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
         model_path = os.path.join(_SCRIPT_DIR, "..", "models", model_path)
 
     try:
-        mt1 = metaworld.MT1(task_name)
-        env_cls = mt1.train_classes[task_name]
-        env = env_cls(render_mode="human") if visualize else env_cls()
+        env, train_tasks = make_env(task_name, render_mode="human") if visualize else make_env(task_name)
     except TypeError:
-        mt1 = metaworld.MT1(task_name)
-        env_cls = mt1.train_classes[task_name]
-        env = env_cls()
+        env, train_tasks = make_env(task_name)
         if visualize:
             print("Warning: render_mode not supported by this env; running without visualization.")
     except Exception as e:
@@ -93,7 +90,7 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
     episode_results = []
     t_rollout_start = time.perf_counter()
 
-    n_goals = len(mt1.train_tasks)
+    n_goals = len(train_tasks)
     if goal_indices is not None:
         indices_to_run = goal_indices
     else:
@@ -101,7 +98,7 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
     actual_episodes = len(indices_to_run)
 
     for i, goal_idx in enumerate(indices_to_run):
-        task = mt1.train_tasks[goal_idx]
+        task = train_tasks[goal_idx]
         env.set_task(task)
         if seed is not None:
             try:
@@ -152,11 +149,10 @@ def test_policy(model_path, num_episodes=100, task_name='reach-v3', clip_actions
         if visualize:
             print(f"  Episode {i+1} (goal {goal_idx}): {'success' if succ else 'fail'}")
 
-    if visualize:
-        try:
-            env.close()
-        except Exception:
-            pass
+    try:
+        env.close()
+    except Exception:
+        pass
 
     t_end = time.perf_counter()
     success_rate = success_count / actual_episodes * 100
@@ -208,18 +204,17 @@ def test_policy_multitask(model_path, suite="mt10", clip_actions=True, seed=42, 
     for task_id, task_name in enumerate(task_list):
         t_task_start = time.perf_counter()
         try:
-            mt1 = metaworld.MT1(task_name)
-            env = mt1.train_classes[task_name]()
+            env, train_tasks = make_env(task_name)
         except Exception as e:
             print(f"❌ Failed to load task '{task_name}': {e}")
             success_per_task.append(0.0)
             task_times.append(0.0)
             continue
         oh = one_hot_task(task_id, num_tasks=n_tasks)
-        n_goals = min(50, len(mt1.train_tasks))
+        n_goals = min(50, len(train_tasks))
         success_count = 0
         for goal_idx in range(n_goals):
-            task = mt1.train_tasks[goal_idx]
+            task = train_tasks[goal_idx]
             env.set_task(task)
             if seed is not None:
                 try:
@@ -260,6 +255,10 @@ def test_policy_multitask(model_path, suite="mt10", clip_actions=True, seed=42, 
         task_times.append(time.perf_counter() - t_task_start)
         if verbose:
             print(f"  {task_name}: {rate:.1f}% ({success_count}/{n_goals})")
+        try:
+            env.close()
+        except Exception:
+            pass
     t_end = time.perf_counter()
     avg = sum(success_per_task) / len(success_per_task)
     total_s = t_end - t_start
@@ -359,16 +358,14 @@ def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=Tr
     task_id = task_list.index(task_name)
     oh = one_hot_task(task_id, num_tasks=n_tasks)
     try:
-        mt1 = metaworld.MT1(task_name)
-        env_cls = mt1.train_classes[task_name]
-        env = env_cls()
+        env, train_tasks = make_env(task_name)
     except Exception as e:
         print(f"❌ Failed to load task '{task_name}': {e}")
         return None
-    n_goals = min(50, len(mt1.train_tasks))
+    n_goals = min(50, len(train_tasks))
     episode_results = []
     for goal_idx in range(n_goals):
-        task = mt1.train_tasks[goal_idx]
+        task = train_tasks[goal_idx]
         env.set_task(task)
         if seed is not None:
             try:
@@ -415,14 +412,14 @@ def visualize_success_fail_mt10(model_path, task_name, n_each=3, clip_actions=Tr
     print(f"Showing {n_s} SUCCESS (goals {goals_to_show[:n_s]}) then {n_f} FAIL (goals {goals_to_show[n_s:]}). Same env — labels match.")
     print("(Labels use the env's binary success threshold; what you see may look better or worse than the env result.)\n")
     try:
-        env_render = env_cls(render_mode="human")
+        env_render, _ = make_env(task_name, render_mode="human")
     except TypeError:
-        env_render = env_cls()
+        env_render, _ = make_env(task_name)
         print("Warning: render_mode not supported; running phase 2 without visualization.")
     for j, goal_idx in enumerate(goals_to_show):
         is_success = j < n_s
         print(f"  >>> Episode {j+1}/{len(goals_to_show)}: Goal {goal_idx} — {'SUCCESS' if is_success else 'FAIL'} <<<")
-        task = mt1.train_tasks[goal_idx]
+        task = train_tasks[goal_idx]
         env_render.set_task(task)
         if seed is not None:
             try:
@@ -479,9 +476,8 @@ def test_policy_parallel_visualize(model_path, n_parallel=5, task_name='reach-v3
         script_dir = os.path.dirname(os.path.abspath(__file__))
         model_path = os.path.join(script_dir, '..', 'models', model_path)
     try:
-        mt1 = metaworld.MT1(task_name)
-        env_cls = mt1.train_classes[task_name]
-        envs = [env_cls(render_mode="human") for _ in range(n_parallel)]
+        _, train_tasks = make_env(task_name)
+        envs = [make_env(task_name, render_mode="human")[0] for _ in range(n_parallel)]
     except TypeError:
         print("Warning: render_mode not supported; cannot run parallel visualize.")
         return None
@@ -502,7 +498,7 @@ def test_policy_parallel_visualize(model_path, n_parallel=5, task_name='reach-v3
                 pass
         return None
     model.eval()
-    tasks = mt1.train_tasks
+    tasks = train_tasks
     n_parallel = min(n_parallel, len(tasks))
     for i in range(n_parallel):
         envs[i].set_task(tasks[i])

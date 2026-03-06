@@ -60,7 +60,7 @@ Evaluation runs from **test.py** are logged to the same project **`CS229_FinalPr
 From project root:
 
 ```bash
-python test.py --approach baseline --model cloned_policy.pth
+python test.py --approach baseline --model latest_policy.pth
 python test.py --approach baseline --model my_model.pth --suite mt10
 ```
 
@@ -83,7 +83,7 @@ python test.py --approach baseline --model my.pth --wandb-tag model:mt10-500ep -
 For the MT10 parallel coordinates plot, W&B auto-scales each axis to the data range. To force all success-rate axes to 0–100%, run once from project root:
 
 ```bash
-python log_wandb_scale_anchors.py
+python scripts_all/log_wandb_scale_anchors.py
 ```
 
 This creates two dummy runs (`scale-anchor-0` and `scale-anchor-100`) with all MT10 success-rate metrics at 0 and 100. Include these runs in the parallel coordinates panel's run set so all axes scale 0–100%. Filter by tag `scale-anchor` or `mt10` to hide these runs in other panels or to find them for the parallel plot. You only need to run it once per project unless you delete the anchor runs.
@@ -146,12 +146,12 @@ You can initialize sweeps in the W&B web UI instead of writing local YAML files.
 3. In the sweep creator you will see either:
    - A **YAML config** text area: paste a full sweep config (see templates below), or
    - A **method / metric / parameters** form: set method (e.g. grid), metric name `eval/success_rate_avg`, goal **maximize**, then add parameters by name and type.
-4. Set the **program** to `run_sweep.py` (or the command that runs it, e.g. `python run_sweep.py`). When you run the agent from your machine with `wandb agent ...` from the **project root**, the working directory is already correct.
+4. Set the **program** to `scripts_all/run_sweep.py` (or the command that runs it, e.g. `python scripts_all/run_sweep.py`). When you run the agent from your machine with `wandb agent ...` from the **project root**, the working directory is already correct.
 5. Save/create the sweep. Copy the sweep ID, then from project root run: `wandb agent <entity>/CS229_FinalProject/<sweep_id>`. No YAML file is needed on disk for the sweep definition.
 
 **Parameter reference** (for the UI form or when editing pasted YAML)
 
-Parameters that `run_sweep.py` reads from the sweep config. Any parameter not set in the sweep falls back to `baseline/train_config.yaml`.
+Parameters that `scripts_all/run_sweep.py` reads from the sweep config. Any parameter not set in the sweep falls back to `baseline/train_config.yaml`.
 
 | Parameter | Type | Example (YAML) |
 |-----------|------|----------------|
@@ -173,7 +173,7 @@ Paste one of these into the UI’s YAML config editor, then edit the `parameters
 **Template 1 — MT-10 architecture sweep (grid, 2 runs):**
 
 ```yaml
-program: run_sweep.py
+program: scripts_all/run_sweep.py
 method: grid
 metric:
   name: eval/success_rate_avg
@@ -194,7 +194,7 @@ parameters:
 **Template 2 — Small custom grid (edit values in UI):**
 
 ```yaml
-program: run_sweep.py
+program: scripts_all/run_sweep.py
 method: grid
 metric:
   name: eval/success_rate_avg
@@ -226,5 +226,5 @@ parameters:
 | Test runs (eval)  | `python test.py --approach baseline --model <name>` (job_type=eval) |
 | Config defaults   | `baseline/train_config.yaml` |
 | Sweep definition  | `baseline/sweep.yaml`; MT-10 overnight: `sweep_mt10_arch.yaml`, `sweep_mt10_epochs.yaml`, `sweep_mt10_end_inner_full.yaml` |
-| Sweep entrypoint  | `run_sweep.py` (loads config + `wandb.config`) |
+| Sweep entrypoint  | `scripts_all/run_sweep.py` (loads config + `wandb.config`) |
 | MT-10 baseline model | `baseline/models/mt10_baseline.pth` (300 ep, 128×128, end_inner 0.01); use with `test.py --model mt10_baseline.pth --suite mt10` |

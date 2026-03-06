@@ -2,7 +2,7 @@
 # Create sweep: wandb sweep baseline/sweep.yaml
 # Run agent:   wandb agent <entity>/<project>/<sweep_id>
 
-program: run_sweep.py
+program: scripts_all/run_sweep.py
 method: random
 metric:
   name: eval/success_rate_avg

@@ -2,7 +2,7 @@
 # Create: wandb sweep baseline/sweep_mt10_epochs.yaml
 # Run:    wandb agent <entity>/CS229_FinalProject/<sweep_id>
 
-program: run_sweep.py
+program: scripts_all/run_sweep.py
 method: grid
 metric:
   name: eval/success_rate_avg

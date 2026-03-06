@@ -5,13 +5,13 @@ Single entrypoint: use this script for all testing (baseline and other approache
 Baseline eval logic lives in baseline/scripts/test.py; root delegates to it when --approach baseline.
 
 Usage:
-    python test.py --approach baseline --model cloned_policy.pth --episodes 50
-    python test.py --approach baseline --model cloned_policy.pth --suite mt10
-    python test.py --approach baseline --model cloned_policy.pth --episodes 1 --visualize
-    python test.py --approach baseline --model cloned_policy.pth --visualize-series 5
-    python test.py --approach baseline --model cloned_policy.pth --visualize-success-fail 3
+    python test.py --approach baseline --model latest_policy.pth --episodes 50
+    python test.py --approach baseline --model latest_policy.pth --suite mt10
+    python test.py --approach baseline --model latest_policy.pth --episodes 1 --visualize
+    python test.py --approach baseline --model latest_policy.pth --visualize-series 5
+    python test.py --approach baseline --model latest_policy.pth --visualize-success-fail 3
     python test.py --approach baseline --model latest-upsampled-end --visualize-success-fail 3
-    python test.py --approach baseline --model cloned_policy.pth --visualize-parallel 5
+    python test.py --approach baseline --model latest_policy.pth --visualize-parallel 5
     # Clipping is on by default (same as train.py). Use --no-clip to disable.
 """
 
@@ -110,7 +110,7 @@ def load_model_class(approach):
     """Dynamically load the ClonePolicy from the appropriate approach"""
     if approach == 'baseline':
         sys.path.insert(0, os.path.join('baseline', 'scripts'))
-    elif approach in ['vae', 'tce', 'hybrid']:
+    elif approach in ['vae', 'tce', 'dagger', 'hybrid']:
         sys.path.insert(0, os.path.join(approach, 'scripts'))
     else:
         raise ValueError(f"Unknown approach: {approach}")
@@ -130,7 +130,7 @@ def test_policy(approach, model_name, num_episodes=50, task_name='reach-v3',
     
     Args:
         approach: 'baseline', 'vae', 'tce', or 'hybrid'
-        model_name: Name of the model file (e.g., cloned_policy.pth)
+        model_name: Name of the model file (e.g., latest_policy.pth)
         num_episodes: Number of episodes to test
         task_name: MetaWorld task name
         clip_actions: Whether to clip actions to [-1, 1] (default True; matches train.py)
@@ -452,14 +452,14 @@ if __name__ == "__main__":
         epilog="""
 Examples:
   python test.py --approach baseline --model cloned_policy_stable2.pth
-  python test.py --approach baseline --model cloned_policy.pth --episodes 500 --verbose 50
+  python test.py --approach baseline --model latest_policy.pth --episodes 500 --verbose 50
   python test.py --approach baseline --model baseline_lr001_e50.pth
   python test.py --approach baseline --model my.pth --no-clip   # disable action clipping
         """
     )
     
     parser.add_argument('--approach', type=str, default='baseline', 
-                        choices=['baseline', 'vae', 'tce', 'hybrid'],
+                        choices=['baseline', 'vae', 'tce', 'dagger', 'hybrid'],
                         help='Which approach to test (default: baseline)')
     parser.add_argument('--model', type=str, required=True, 
                         help='Model filename (e.g. latest.pth), or latest-upsampled-end for latest run with end_weight!=1')

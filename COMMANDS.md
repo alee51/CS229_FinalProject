@@ -61,7 +61,7 @@ python baseline/scripts/collect_one_per_goal.py --mt10
 
 ## 2. Training
 
-**From project root** (unified entrypoint):
+**From project root** (unified entrypoint). `train.py` and `test.py` dispatch by **`--approach`** (baseline, vae, tce, dagger). Tasks, env creation, and eval APIs come from **`core/`** (tasks, env, eval).
 
 ```bash
 python train.py --approach baseline
@@ -69,7 +69,7 @@ python train.py --approach baseline
 
 - Defaults are loaded from **`baseline/train_config.yaml`** (single source of truth); override with CLI flags.
 - **W&B:** Logging to Weights & Biases is **on by default**. Use `--no-wandb` to disable. Use `--wandb-tag name:alice` (repeatable) to tag runs. See **WANDB.md** for setup, sweeps, overnight MT-10 sweeps, and config. To create sweeps from the W&B web UI instead of YAML, see WANDB.md (Create a sweep from the W&B web UI).
-- Saves to `baseline/models/cloned_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS_*.pth`.
+- Saves to `baseline/models/latest_policy.pth` and logs to `baseline/training_runs.json`; each run also saved as `baseline/models/runs/run_YYYYMMDD_HHMMSS_*.pth`.
 
 **Common options:**
 
@@ -116,7 +116,7 @@ python train.py --epochs 100
 **50-goal eval** (1 episode per goal; deterministic):
 
 ```bash
-python test.py --approach baseline --model cloned_policy.pth --episodes 50 --seed 42
+python test.py --approach baseline --model latest_policy.pth --episodes 50 --seed 42
 ```
 
 - **Clip**: Actions are clipped to [-1, 1] by default (same as train.py). Use `--no-clip` to disable.
@@ -127,7 +127,7 @@ python test.py --approach baseline --model cloned_policy.pth --episodes 50 --see
 
 **Model path shortcuts:**
 
-- `latest.pth` or `cloned_policy.pth`: under `baseline/models/`.
+- `latest_policy.pth`: under `baseline/models/` (overwritten each run; use `models/runs/run_*.pth` for history).
 - Run checkpoints use descriptive names: `baseline/models/runs/run_YYYYMMDD_HHMMSS_end3_inner5x10_noclip.pth` (end weight, inner tier, clip/noclip).
 - `latest-upsampled-end`: resolves to the **latest run with end_weight ≠ 1** in `baseline/training_runs.json`.
 
@@ -247,6 +247,20 @@ python test.py --approach baseline --model baseline/models/runs/run_YYYYMMDD_HHM
 cd baseline/scripts
 python check_data_len.py   # if present: prints trajectory count and total samples
 ```
+
+---
+
+## Root / cross-approach scripts (scripts_all/)
+
+Scripts in **`scripts_all/`** apply to all approaches. Run from **project root**.
+
+| Script | Description | Command |
+|--------|-------------|---------|
+| **run_sweep.py** | W&B sweep entrypoint: loads baseline config, overlays `wandb.config`, runs training. | `python scripts_all/run_sweep.py` (used by `wandb agent`; set `program: scripts_all/run_sweep.py` in sweep YAML). |
+| **log_wandb_scale_anchors.py** | One-off: log two dummy W&B runs (0% and 100% success) so MT10 parallel-coordinates axes scale 0–100%. | `python scripts_all/log_wandb_scale_anchors.py` |
+| **visualize_expert_demo.py** | Dev utility: render expert policy on one or more goals for an MT-10 task. | `python scripts_all/visualize_expert_demo.py -n 3 --task reach-v3` or `--task lever-pull-v3 --goals 14 43 47` |
+
+See **WANDB.md** for sweep setup and scale-anchors usage.
 
 ---
 
