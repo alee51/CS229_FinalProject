@@ -2,14 +2,16 @@
 """
 One-off script to log two W&B runs (scale-anchor-0 and scale-anchor-100) so the
 parallel coordinates plot scales all MT10 success-rate axes from 0 to 100%.
-Run once per project: python log_wandb_scale_anchors.py
+Run once per project: python scripts_all/log_wandb_scale_anchors.py
 """
 import argparse
 import sys
 import os
 
-# Project root; allow import of baseline.tasks
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Project root (parent of scripts_all); allow import of baseline.tasks
+_script_dir = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(_script_dir)
+sys.path.insert(0, PROJECT_ROOT)
 
 from baseline.tasks import get_tasks
 

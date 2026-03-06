@@ -6,11 +6,11 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 
 | run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |
 |----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|
+| latest_policy.pth | 100 | 1.0 | — | yes | 28827.9133 | 193.2s | MT10 reach: 2.0% | avg: 4.2% |
+| latest_policy.pth | 500 | 1.0 | — | yes | 5.9994 | 62.0s | MT10 reach: — | avg: — |
+| cloned_policy.pth | 500 | 3.0 | — | yes | 27.4631 | 47.7s | MT10 reach: — | avg: — |
 | cloned_policy.pth | 1000 | 3.0 | — | yes | 3.6100 | 150.1s | MT10 reach: — | avg: — |
 | cloned_policy.pth | 1000 | 3.0 | — | yes | 3.3328 | 132.0s | MT10 reach: — | avg: — |
-| cloned_policy.pth | 100 | 3.0 | — | yes | 1617.7128 | 10.3s | MT10 reach: — | avg: — |
-| cloned_policy.pth | 100 | 3.0 | — | yes | 231.1732 | 9.9s | MT10 reach: — | avg: — |
-| cloned_policy.pth | 100 | 3.0 | — | yes | 30024.0584 | 140.9s | MT10 reach: 2.0% | avg: 53.8% |
 
 ---
 
@@ -18,6 +18,9 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 
 | run_file | epochs | end_weight | end_inner | clip | final_loss (*10e6) | train_time | success_rate | failed_goals / MT10 |
 |----------|--------|------------|-----------|------|-----------------|------------|--------------|---------------------|
+| cloned_policy.pth | 100 | 3.0 | — | yes | 1617.7128 | 10.3s | MT10 reach: — | avg: — |
+| cloned_policy.pth | 100 | 3.0 | — | yes | 231.1732 | 9.9s | MT10 reach: — | avg: — |
+| cloned_policy.pth | 100 | 3.0 | — | yes | 30024.0584 | 140.9s | MT10 reach: 2.0% | avg: 53.8% |
 | cloned_policy.pth | 1000 | 1 | — | yes | 3816.4123 | 3120.4s | MT10 reach: 22.0% | avg: 73.0% |
 | cloned_policy.pth | 1000 | 1 | — | yes | 6672.5581 | 28082.6s | MT10 reach: 14.0% | avg: 49.0% |
 | cloned_policy.pth | 1000 | 1 | — | yes | 6541.1687 | 1905.8s | MT10 reach: 14.0% | avg: 52.2% |
@@ -70,5 +73,3 @@ Full history in `training_runs.json`. Per-run models in `models/runs/` with desc
 | latest.pth | 500 | 3.0 | — | no | 12.5762 | — | 68.0% | 2,4,6,12,13,16,18,25,27,29,30,33,37,46,47... |
 | latest.pth | 100 | 3.0 | — | no | 45.0471 | — | 28.0% | 2,3,4,5,6,7,8,11,12,13,15,17,18,19,20... |
 | latest.pth | 1000 | 1.0 | — | no | 11.4377 | — | 64.0% | 1,2,3,4,9,12,15,17,21,24,26,27,35,36,37... |
-| latest.pth | 500 | 1.0 | — | no | 9.5269 | — | 60.0% | 0,1,5,7,8,11,12,13,17,18,20,21,28,35,41... |
-| cloned_policy.pth | 500 | 3.0 | — | no | 8.8396 | — | — |  |
